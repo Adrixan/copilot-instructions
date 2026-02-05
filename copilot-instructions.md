@@ -148,33 +148,54 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
    - **Action:** Generate LICENSE file.
 
 7. **Testing Approach:**
-   - "Are you following Test-Driven Development (TDD)?"
-   - **Default:** YES (TDD is mandatory unless user explicitly opts out for prototypes)
+   - "Are you following Test-Driven Development (TDD) for business logic?"
+   - **Default:** YES for business logic, algorithms, and APIs
+   - **Clarify:** TDD applies to logic, not configuration/documentation
    - **Why:** Ensures code quality, prevents regressions, improves design from the start.
-   - **Action:** Record in state file. If TDD is enabled (default), ALWAYS write tests before implementation.
+   - **Action:** Record in state file. Enable TDD for production logic by default.
 </protocol_initialization>
 
 <workflow_mandates>
-1. **TDD is MANDATORY (Unless Explicitly Disabled):**
-   - **Default Behavior:** ALWAYS use Test-Driven Development for ALL production code.
-   - **When TDD Applies:** Backend logic, frontend components, infrastructure code, scripts, APIs, utilities.
-   - **Only Exception:** Quick prototypes/spikes explicitly marked as "no tests" by user.
+1. **TDD is MANDATORY (With Practical Exceptions):**
+   - **Default Behavior:** Use Test-Driven Development for ALL business logic and production code.
+   
+   **When TDD APPLIES (Write tests first):**
+   - ✅ Business logic and algorithms
+   - ✅ API endpoints and services
+   - ✅ Data transformations and processing
+   - ✅ Backend services and libraries
+   - ✅ Frontend components with logic
+   - ✅ Utility functions and helpers
+   - ✅ Authentication and authorization
+   - ✅ Database queries and models (unit/integration tests)
+   
+   **When TDD DOESN'T APPLY (Alternative approaches):**
+   - ❌ **Configuration files** (JSON, YAML, TOML) → Use validation schemas instead
+   - ❌ **Declarative infrastructure** (Terraform HCL, K8s manifests) → Use linters (tflint, kubeval) and policy checks (OPA)
+   - ❌ **Documentation** (Markdown, plain text) → Use spell checkers and link validators
+   - ❌ **Simple glue scripts** (< 10 lines, just chaining commands) → Manual verification acceptable
+   - ❌ **Database migrations** → Integration tests after writing, not TDD
+   - ❌ **UI layouts/styling** (CSS, visual design) → Visual regression tests, not TDD
+   - ❌ **Exploratory/spike code** → Explicitly mark as "spike", rewrite with TDD before production
+   - ❌ **Generated code** (from tools/scaffolding) → Test the generator, not the output
    
    **TDD Workflow (RED-GREEN-REFACTOR):**
    - **Phase 1 (Red):** Write the failing test FIRST. Test must fail for the right reason.
    - **Phase 2 (Green):** Write the SIMPLEST code to make the test pass. No more, no less.
    - **Phase 3 (Refactor):** Clean up code and tests while keeping tests green.
    
-   **Absolute Requirements:**
-   - NEVER output implementation code without its corresponding test.
-   - NEVER suggest "add tests later" - tests come FIRST or TOGETHER.
-   - NEVER skip tests for "simple" functions - complexity grows over time.
-   - If user asks for code without tests, remind them of TDD and ask: "Should I write the test first?"
+   **Requirements for Production Code:**
+   - For business logic: ALWAYS write tests first or together with implementation
+   - For simple functions: Tests can be written after if truly trivial (< 5 lines, no branches)
+   - For critical paths (auth, payments, security): MUST have tests BEFORE implementation
+   - If user asks for code without tests: Remind them and ask: "Should I write the test first?"
+   - NEVER suggest "add tests later" for complex logic
    
    **Coverage Requirements:**
-   - Production code: Minimum 80% coverage (check project-state.md for specific targets)
+   - Production business logic: Minimum 80% coverage (check project-state.md for specific targets)
    - Critical paths (auth, payments, security): 100% coverage
    - Edge cases and error handling: Always tested
+   - Configuration/infrastructure: Validation and linting instead of unit tests
    
    **Rationale:** 
    - Ensures correctness from the start
@@ -311,7 +332,7 @@ Domain-specific instructions are located in the instructions/ directory:
 - **instructions/ops.instructions.md:** Docker, Kubernetes, Terraform, Ansible
   - Infrastructure as Code
   - Container security (non-root, scanning)
-  - TDD for infrastructure
+  - Testing strategies (linting, validation, policy checks)
   - CI/CD pipelines
   - Examples: examples/docker/, examples/terraform/, examples/kubernetes/, examples/ansible/
 
@@ -360,12 +381,13 @@ Before code is committed, ensure:
 
 1. **Tests Pass:**
    - All existing tests pass
-   - New tests added for new features
-   - Coverage meets minimums (see instruction files)
+   - New tests added for new business logic and features
+   - Infrastructure/config validated with linters and policy checks
+   - Coverage meets minimums (see instruction files and project-state.md)
 
 2. **Linting:**
    - Code formatted (Prettier, Black, gofmt, terraform fmt)
-   - Linter passes (ESLint, Ruff, ShellCheck)
+   - Linter passes (ESLint, Ruff, ShellCheck, tflint, kubeval)
    - No warnings (or documented exceptions)
 
 3. **Security:**
