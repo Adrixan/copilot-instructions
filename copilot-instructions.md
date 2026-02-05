@@ -14,12 +14,24 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
 
 **IMPORTANT:** If this file does NOT exist, you MUST immediately initiate the Initialization Interview (see protocol_initialization section) BEFORE writing any code.
 
-1. **READ:** Before every task, check this file for established context (Stack, Demographics, Language).
+**AUTO-DETECTION:** When creating the state file, FIRST auto-detect the development environment (OS, package manager, shell) and record it.
+
+1. **READ:** Before every task, check this file for established context (Stack, Demographics, Language, OS, Package Manager).
 2. **WRITE:** Update this file whenever a major decision (stack choice, api design) is made.
+3. **AUTO-UPDATE:** Re-detect environment if:
+   - Package manager commands fail
+   - User reports OS/environment changes
+   - State file is older than 30 days (environment may have changed)
 
 **Example state file structure:**
 ```markdown
 # Project State
+
+## Development Environment (Auto-Detected)
+- OS: Linux (Ubuntu 22.04)
+- Package Manager: apt (auto-detected)
+- Shell: bash
+- Detection Date: 2026-02-05
 
 ## Stack
 - Backend: Python 3.11 + FastAPI
@@ -39,6 +51,10 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
 ## Architecture
 - Type: Microservices
 - API: REST with OpenAPI spec
+
+## Testing
+- Approach: Test-Driven Development (TDD)
+- Frameworks: pytest (backend), Jest (frontend)
 ```
 </state_management>
 
@@ -52,24 +68,62 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
 **ACTION:** You must STOP and perform the following "Initialization Interview". Do NOT write ANY code until ALL questions are answered.
 
 **WORKFLOW:**
-1. **First:** Ask ALL initialization questions below (1-5)
+1. **First:** Ask ALL initialization questions below (1-7)
 2. **Then:** Wait for user responses to ALL questions  
 3. **Only after:** All answers are provided, create the `.copilot/project-state.md` file
 4. **Finally:** Begin code generation based on the collected requirements
 
 **NEVER skip directly to writing code without completing this interview.**
 
-1. **User Demographics:**
+1. **Development Environment (Auto-Detect):**
+   - **Action:** Automatically detect the operating system and package manager:
+     - Use system commands to identify OS and distribution
+     - For Linux: Detect distribution from `/etc/os-release` or `/etc/issue`
+     - For macOS: Check `uname` and verify Homebrew availability
+     - For Windows: Detect PowerShell/WSL2 and check for package managers
+   - **Why:** Ensures correct package manager and installation commands without user input.
+   - **Detection Logic:**
+     ```bash
+     # Auto-detect OS and package manager
+     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+       if [ -f /etc/os-release ]; then
+         . /etc/os-release
+         OS=$NAME
+         if command -v apt &> /dev/null; then PKG_MGR="apt"
+         elif command -v dnf &> /dev/null; then PKG_MGR="dnf"
+         elif command -v yum &> /dev/null; then PKG_MGR="yum"
+         elif command -v pacman &> /dev/null; then PKG_MGR="pacman"
+         elif command -v zypper &> /dev/null; then PKG_MGR="zypper"
+         fi
+       fi
+     elif [[ "$OSTYPE" == "darwin"* ]]; then
+       OS="macOS"
+       PKG_MGR=$(command -v brew &> /dev/null && echo "brew" || echo "none")
+     elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+       OS="Windows"
+       if command -v choco &> /dev/null; then PKG_MGR="choco"
+       elif command -v winget &> /dev/null; then PKG_MGR="winget"
+       else PKG_MGR="manual"
+       fi
+     fi
+     ```
+   - **Record in state file:**
+     - OS name and version
+     - Detected package manager
+     - Shell environment
+   - **Fallback:** If auto-detection fails, ask user to specify manually
+
+2. **User Demographics:**
    - "Who is this for?" (e.g., Kids, IT Experts, Common Users).
    - "What are the accessibility/device constraints?"
    - **Why:** Determines UI complexity, accessibility requirements, language level.
 
-2. **App Type & Architecture:**
+3. **App Type & Architecture:**
    - "Is this a TUI, GUI, CLI, Web App, Mobile App, or API?"
    - "Do you prefer a Monolith or Microservices?" (Default to Microservices for Web).
    - **Why:** Affects technology choices, deployment strategy, scaling approach.
 
-3. **Technology Stack:**
+4. **Technology Stack:**
    - Ask: "Do you have a specific stack, or do you want recommendations?"
    - *If recommendations:* Provide **2-5 options** (Pros/Cons) based on the demographics.
    - **Example Options for Web API:**
@@ -80,30 +134,104 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
    - *Action:* Once selected, immediately generate the appropriate `.gitignore`.
    - **Resources:** See instructions/backend.instructions.md, instructions/web.instructions.md
 
-4. **Localization (i18n):**
+5. **Localization (i18n):**
    - "Default is English. Which other languages must be supported?"
    - **Why:** Must be implemented from day one (retrofitting is expensive).
    - **Action:** Prepare translation key files immediately (see instructions/web.instructions.md).
 
-5. **Licensing:**
+6. **Licensing:**
    - "Is this Commercial or Open Source? Which license do you prefer?"
    - **Recommendations:** 
      - MIT (permissive, business-friendly)
      - Apache 2.0 (permissive, patent protection)
      - GPL v3 (copyleft, viral)
    - **Action:** Generate LICENSE file.
+
+7. **Testing Approach:**
+   - "Are you following Test-Driven Development (TDD)?"
+   - **Default:** YES (TDD is mandatory unless user explicitly opts out for prototypes)
+   - **Why:** Ensures code quality, prevents regressions, improves design from the start.
+   - **Action:** Record in state file. If TDD is enabled (default), ALWAYS write tests before implementation.
 </protocol_initialization>
 
 <workflow_mandates>
-1. **TDD is MANDATORY:**
-   - **Phase 1 (Red):** Write the failing test first.
-   - **Phase 2 (Green):** Write simplest code to pass.
-   - **Phase 3 (Refactor):** Improve code quality, extract modules.
-   - *Constraint:* Never output code without the corresponding test.
-   - **Rationale:** Ensures correctness, prevents regressions, improves design.
-   - **Examples:** See instructions/backend.instructions.md, instructions/ops.instructions.md
+1. **TDD is MANDATORY (Unless Explicitly Disabled):**
+   - **Default Behavior:** ALWAYS use Test-Driven Development for ALL production code.
+   - **When TDD Applies:** Backend logic, frontend components, infrastructure code, scripts, APIs, utilities.
+   - **Only Exception:** Quick prototypes/spikes explicitly marked as "no tests" by user.
+   
+   **TDD Workflow (RED-GREEN-REFACTOR):**
+   - **Phase 1 (Red):** Write the failing test FIRST. Test must fail for the right reason.
+   - **Phase 2 (Green):** Write the SIMPLEST code to make the test pass. No more, no less.
+   - **Phase 3 (Refactor):** Clean up code and tests while keeping tests green.
+   
+   **Absolute Requirements:**
+   - NEVER output implementation code without its corresponding test.
+   - NEVER suggest "add tests later" - tests come FIRST or TOGETHER.
+   - NEVER skip tests for "simple" functions - complexity grows over time.
+   - If user asks for code without tests, remind them of TDD and ask: "Should I write the test first?"
+   
+   **Coverage Requirements:**
+   - Production code: Minimum 80% coverage (check project-state.md for specific targets)
+   - Critical paths (auth, payments, security): 100% coverage
+   - Edge cases and error handling: Always tested
+   
+   **Rationale:** 
+   - Ensures correctness from the start
+   - Prevents regressions during refactoring
+   - Improves design (testable code is well-designed code)
+   - Documents expected behavior
+   - Reduces debugging time
+   
+   **Examples:** See instructions/backend.instructions.md, instructions/ops.instructions.md, instructions/scripting.instructions.md
 
-2. **Code Quality:**
+2. **Package Management & Dependencies (Auto-Detected):**
+   - **ALWAYS check project-state.md** for the auto-detected package manager.
+   - **Automatic Package Manager Selection:** Based on detected OS from project-state.md:
+     - **Ubuntu/Debian (apt):** `sudo apt update && sudo apt install -y <package>`
+     - **Fedora/RHEL (dnf/yum):** `sudo dnf install -y <package>` (or `yum` for older versions)
+     - **Arch Linux (pacman):** `sudo pacman -S <package>`
+     - **openSUSE (zypper):** `sudo zypper install <package>` (or `sudo zypper in <package>`)
+     - **Alpine Linux (apk):** `apk add <package>`
+     - **macOS (brew):** `brew install <package>`
+     - **Windows (choco/winget):** `choco install <package>` or `winget install <package>`
+   - **Installation Helper Function:**
+     ```bash
+     # Auto-install based on detected package manager
+     install_package() {
+       local pkg=$1
+       case $PKG_MGR in
+         apt) sudo apt update && sudo apt install -y "$pkg" ;;
+         dnf) sudo dnf install -y "$pkg" ;;
+         yum) sudo yum install -y "$pkg" ;;
+         pacman) sudo pacman -S --noconfirm "$pkg" ;;
+         zypper) sudo zypper install -y "$pkg" ;;
+         brew) brew install "$pkg" ;;
+         choco) choco install "$pkg" -y ;;
+         winget) winget install "$pkg" ;;
+         *) echo "Error: Unknown package manager. Install $pkg manually." ;;
+       esac
+     }
+     ```
+   - **Prefer Distribution Packages:** For Linux, ALWAYS prefer distro packages over language-specific installers.
+     - Example: `sudo apt install python3-pip` NOT `curl https://bootstrap.pypa.io/get-pip.py`
+   - **Verification:** Before installing, verify package manager is available:
+     ```bash
+     if ! command -v $PKG_MGR &> /dev/null; then
+       echo "Error: $PKG_MGR not found. Re-run OS detection."
+     fi
+     ```
+   - **Language Package Managers:** Use only after system packages:
+     - Python: `pip install` (in virtual environment)
+     - Node.js: `npm install` or `pnpm install`
+     - Ruby: `gem install`
+     - Rust: `cargo install`
+   - **Docker Base Images:** Match package manager to base image:
+     - `ubuntu:22.04` → `apt`
+     - `fedora:38` → `dnf`
+     - `alpine:3.18` → `apk`
+
+3. **Code Quality:**
    - **Simple & Readable:** Prioritize clarity over cleverness.
      - Functions: Max 50 lines
      - Classes: Max 300 lines
@@ -117,7 +245,7 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
    - **Small Stages:** Output code in chunks small enough for atomic Git commits.
      - **Example:** 1 feature = 1 commit, 1-3 files changed.
 
-3. **Security Check:**
+4. **Security Check:**
    - Before suggesting a `git commit`, explicitly scan:
      - **Dependencies:** Known vulnerabilities (npm audit, pip-audit, Snyk).
      - **Secrets:** No hardcoded API keys, passwords, tokens.
@@ -126,7 +254,7 @@ Each domain (Backend, Web, Ops, Scripting) has dedicated instruction files with:
    - **Action:** If issues found, suggest fixes before commit.
    - **Examples:** See instructions/backend.instructions.md (security_standards)
 
-4. **Performance Awareness:**
+5. **Performance Awareness:**
    - **Backend:** Check for N+1 queries, missing indexes, inefficient algorithms.
    - **Frontend:** Bundle size, lazy loading, image optimization.
    - **Infrastructure:** Resource limits, caching strategy.

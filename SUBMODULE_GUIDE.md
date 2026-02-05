@@ -46,7 +46,9 @@ This creates:
 - `.gitmodules` file with submodule configuration
 - `.github/copilot-instructions/` directory with the submodule content
 
-### Step 2: Create Symlink (Recommended)
+### Step 2: Create Symlink or Direct Reference
+
+**Option A: Symlink (For Small Projects)**
 
 GitHub Copilot looks for `.github/copilot-instructions.md`. Create a symlink:
 
@@ -63,6 +65,50 @@ ls -la copilot-instructions.md
 ```powershell
 cd .github
 New-Item -ItemType SymbolicLink -Path "copilot-instructions.md" -Target "copilot-instructions\copilot-instructions.md"
+```
+
+**Option B: Domain-Specific Instructions (Recommended for Large Projects)**
+
+To avoid response timeouts with large instruction files, symlink directly to domain-specific instructions:
+
+```bash
+cd .github
+
+# For backend-focused projects
+ln -s copilot-instructions/instructions/backend.instructions.md copilot-instructions.md
+
+# For web-focused projects
+ln -s copilot-instructions/instructions/web.instructions.md copilot-instructions.md
+
+# For ops/infrastructure projects
+ln -s copilot-instructions/instructions/ops.instructions.md copilot-instructions.md
+
+# For scripting projects
+ln -s copilot-instructions/instructions/scripting.instructions.md copilot-instructions.md
+```
+
+**Option C: Lightweight Orchestrator (Best for Mixed Projects)**
+
+Create a custom lightweight orchestrator that loads only what you need:
+
+```bash
+cat > .github/copilot-instructions.md << 'EOF'
+# Project-Specific Copilot Instructions
+
+## Active Domains
+<!-- Only include domains actively used in this project -->
+
+### Backend
+[Include: copilot-instructions/instructions/backend.instructions.md]
+
+<!-- Uncomment only when working on these areas:
+### Web Frontend
+[Include: copilot-instructions/instructions/web.instructions.md]
+
+### Infrastructure
+[Include: copilot-instructions/instructions/ops.instructions.md]
+-->
+EOF
 ```
 
 ### Step 3: Commit Changes
@@ -413,6 +459,83 @@ git merge --continue
 # Or: git rebase --continue
 ```
 
+### Issue: Response Timeouts / Slow Copilot Performance
+
+**Symptoms:** 
+- Copilot suggestions are slow or timeout
+- "Copilot is not responding" errors
+- Long wait times for code completions
+
+**Root Cause:** The full instruction file is too large for Copilot to process efficiently
+
+**Solutions:**
+
+1. **Use Domain-Specific Instructions** (Recommended):
+   ```bash
+   cd .github
+   # Remove full orchestrator symlink
+   rm copilot-instructions.md
+   
+   # Link to specific domain only
+   ln -s copilot-instructions/instructions/backend.instructions.md copilot-instructions.md
+   ```
+
+2. **Create Minimal Custom Orchestrator**:
+   ```bash
+   cat > .github/copilot-instructions.md << 'EOF'
+   # Minimal Copilot Instructions
+   
+   ## Core Principles
+   - TDD: Write tests first
+   - Security: Validate inputs, no hardcoded secrets
+   - Quality: Functions < 50 lines, classes < 300 lines
+   
+   ## Domain Instructions
+   For detailed standards, see:
+   - Backend: .github/copilot-instructions/instructions/backend.instructions.md
+   - Web: .github/copilot-instructions/instructions/web.instructions.md
+   - Ops: .github/copilot-instructions/instructions/ops.instructions.md
+   EOF
+   ```
+
+3. **Rotate Instructions by Context**:
+   ```bash
+   # Script to switch instruction sets
+   cat > scripts/switch-copilot-context.sh << 'EOF'
+   #!/bin/bash
+   CONTEXT=$1
+   cd .github
+   rm -f copilot-instructions.md
+   
+   case $CONTEXT in
+     backend)
+       ln -s copilot-instructions/instructions/backend.instructions.md copilot-instructions.md
+       ;;
+     web)
+       ln -s copilot-instructions/instructions/web.instructions.md copilot-instructions.md
+       ;;
+     ops)
+       ln -s copilot-instructions/instructions/ops.instructions.md copilot-instructions.md
+       ;;
+     *)
+       echo "Usage: $0 {backend|web|ops}"
+       exit 1
+       ;;
+   esac
+   echo "✅ Switched to $CONTEXT instructions"
+   EOF
+   
+   chmod +x scripts/switch-copilot-context.sh
+   
+   # Usage
+   ./scripts/switch-copilot-context.sh backend
+   ```
+
+4. **Split Work Sessions**:
+   - Work on one domain at a time (backend, then frontend, then ops)
+   - Switch instruction files between sessions
+   - Keep context focused and manageable
+
 ### Issue: Symlink Not Working on Windows
 
 **Symptoms:** Copilot not loading instructions on Windows
@@ -513,14 +636,20 @@ packages/
 ## Best Practices Summary
 
 ✅ **DO:**
+- **Use domain-specific instructions** to avoid timeouts (backend.instructions.md, web.instructions.md, etc.)
+- **Start small**: Link to one instruction file first, add more as needed
+- **Rotate contexts**: Switch instruction files based on current work domain
 - Use symlinks for Copilot auto-detection
 - Pin specific versions/tags for production projects
 - Document submodule version in project README
 - Initialize submodules in CI/CD
 - Tag releases in your organization fork
 - Sync with upstream periodically for community improvements
+- **Monitor performance**: If Copilot slows down, reduce instruction file size
 
 ❌ **DON'T:**
+- **Load all instructions at once** if you experience timeouts
+- **Use the full orchestrator** for large projects (causes performance issues)
 - Make direct edits in submodule (do it in the source repo)
 - Commit submodule changes without updating parent
 - Forget to document submodule version requirements
