@@ -8,14 +8,24 @@ Domain-specific instruction files that guide GitHub Copilot to generate secure, 
 
 ## Instruction Files
 
-Located in [`instructions/`](instructions/):
+Located in [`instructions/`](instructions/). Files are split by language/tool so only relevant instructions are loaded per file type, minimizing context window usage:
 
-| File | Domain | Technologies |
-|------|--------|-------------|
-| [ops.instructions.md](instructions/ops.instructions.md) | DevOps & IaC | Docker, Kubernetes, Terraform, Ansible |
-| [backend.instructions.md](instructions/backend.instructions.md) | Backend | Java, PHP, Python, SQL |
-| [web.instructions.md](instructions/web.instructions.md) | Frontend | React, TypeScript, HTML, CSS |
-| [scripting.instructions.md](instructions/scripting.instructions.md) | Scripting | Bash, PowerShell |
+| File | Domain | applyTo |
+|------|--------|---------|
+| [backend-shared](instructions/backend-shared.instructions.md) | Backend (all) | `*.py`, `*.java`, `*.php`, `*.sql` |
+| [backend-python](instructions/backend-python.instructions.md) | Python | `*.py` |
+| [backend-java](instructions/backend-java.instructions.md) | Java | `*.java` |
+| [backend-php](instructions/backend-php.instructions.md) | PHP | `*.php` |
+| [backend-sql](instructions/backend-sql.instructions.md) | SQL | `*.sql` |
+| [ops-shared](instructions/ops-shared.instructions.md) | DevOps (all) | Dockerfiles, infra YAML, `*.tf`, `*.hcl` |
+| [ops-docker](instructions/ops-docker.instructions.md) | Docker | `Dockerfile*`, `docker-compose*` |
+| [ops-kubernetes](instructions/ops-kubernetes.instructions.md) | Kubernetes | `k8s/**`, `kubernetes/**`, `helm/**` |
+| [ops-terraform](instructions/ops-terraform.instructions.md) | Terraform | `*.tf`, `*.tfvars`, `*.hcl` |
+| [ops-ansible](instructions/ops-ansible.instructions.md) | Ansible | `ansible/**`, `playbooks/**` |
+| [scripting-shared](instructions/scripting-shared.instructions.md) | Scripting (all) | `*.sh`, `*.ps1` |
+| [scripting-bash](instructions/scripting-bash.instructions.md) | Bash | `*.sh` |
+| [scripting-powershell](instructions/scripting-powershell.instructions.md) | PowerShell | `*.ps1` |
+| [web](instructions/web.instructions.md) | Frontend | `*.html`, `*.css`, `*.js`, `*.ts`, `*.jsx`, `*.tsx` |
 
 ## Working Examples
 
@@ -73,12 +83,22 @@ Edit `copilot-instructions.md` to add project-specific conventions, internal lib
 
 ```
 copilot-instructions/
-├── copilot-instructions.md      # Main orchestrator
+├── copilot-instructions.md      # Main orchestrator (trimmed)
 ├── instructions/
-│   ├── ops.instructions.md      # DevOps & IaC
-│   ├── backend.instructions.md  # Backend development
-│   ├── web.instructions.md      # Frontend development
-│   └── scripting.instructions.md # Shell scripting
+│   ├── backend-shared.instructions.md  # Backend: shared security, testing, architecture
+│   ├── backend-python.instructions.md  # Python-specific standards
+│   ├── backend-java.instructions.md    # Java-specific standards
+│   ├── backend-php.instructions.md     # PHP-specific standards
+│   ├── backend-sql.instructions.md     # SQL-specific standards
+│   ├── ops-shared.instructions.md      # DevOps: shared security, architecture
+│   ├── ops-docker.instructions.md      # Docker-specific standards
+│   ├── ops-kubernetes.instructions.md  # Kubernetes-specific standards
+│   ├── ops-terraform.instructions.md   # Terraform-specific standards
+│   ├── ops-ansible.instructions.md     # Ansible-specific standards
+│   ├── scripting-shared.instructions.md    # Scripting: shared security, validation
+│   ├── scripting-bash.instructions.md      # Bash-specific standards
+│   ├── scripting-powershell.instructions.md # PowerShell-specific standards
+│   └── web.instructions.md             # Frontend (all concerns tightly coupled)
 ├── examples/                    # Working code demonstrations
 │   ├── backend/                 # Java, PHP, Python
 │   ├── web/react/               # React components + tests

@@ -8,14 +8,12 @@ applyTo:
 ---
 <agent_profile>
 Role: Backend System Engineer
-Skills: Java, PHP, Python, SQL
 Focus: TDD, Security, Modularity
 </agent_profile>
 
 <quick_reference>
 **Critical Rules (TL;DR):**
 - **TDD:** Red → Green → Refactor (see orchestrator for full workflow)
-- **Type Safety:** Strict types in PHP, type hints in Python, strong typing in Java
 - **No SQL Injection:** Prepared statements ONLY, never string concatenation
 - **Migrations:** Schema changes ONLY via migration files
 - **Dependency Injection:** Constructor injection preferred
@@ -23,66 +21,6 @@ Focus: TDD, Security, Modularity
 - **Security:** Input validation, output encoding, least privilege
 - **Testing:** Minimum 80% coverage for business logic, 100% for critical paths
 </quick_reference>
-
-<language_standards>
-
-## Java (Spring Boot / Jakarta EE)
-
-- **Spring Boot 3.x** with Java 17+ (LTS)
-- **Constructor injection** (immutability, testability) — no field injection
-- **Records** for DTOs and value objects
-- **Testing:** JUnit 5 + Mockito + AssertJ
-- **Build:** Maven or Gradle with version catalogs
-
-See [examples/backend/java/](../examples/backend/java/) for UserService and UserServiceTest patterns.
-
----
-
-## PHP (Laravel / Symfony)
-
-- **PHP 8.2+** with `declare(strict_types=1);` at top of EVERY file
-- **Laravel 10.x** or **Symfony 6.x**
-- **Readonly properties** and constructor promotion
-- **Testing:** PHPUnit 10 or Pest
-- **Static Analysis:** PHPStan (level 8+) or Psalm
-
-See [examples/backend/php/](../examples/backend/php/) for UserService and UserServiceTest patterns.
-
----
-
-## Python (FastAPI / Django / Flask)
-
-- **Python 3.11+** with mandatory type hints on all functions/methods
-- **Protocol classes** for dependency interfaces (duck typing with contracts)
-- **Frozen dataclasses** for DTOs
-- **Testing:** Pytest with pytest-cov
-- **Linting:** Ruff or Black + isort + mypy
-
-See [examples/backend/python/](../examples/backend/python/) for UserService and test patterns.
-
----
-
-## SQL
-
-- **ANSI SQL** preferred for portability
-- **Migrations ONLY** for schema changes (Flyway, Liquibase, Alembic)
-- **Indexes** on Foreign Keys, WHERE/JOIN/ORDER BY columns automatically
-- **Naming:** `snake_case` for all identifiers
-
-```python
-# ❌ NEVER (SQL Injection)
-query = f"SELECT * FROM users WHERE username = '{username}'"
-
-# ✅ ALWAYS (Prepared statements)
-query = "SELECT * FROM users WHERE username = %s"
-cursor.execute(query, (username,))
-```
-
-**Query Optimization:** Use EXPLAIN for slow queries, eager loading to prevent N+1, cursor-based pagination for large datasets.
-
-See [examples/production/](../examples/production/) for Alembic migration patterns.
-
-</language_standards>
 
 <testing_protocol>
 **Coverage Requirements:**
