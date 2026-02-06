@@ -27,6 +27,18 @@ Focus: Immutable Infrastructure, Security, State Management
 </quick_reference>
 
 <security_standards>
+**Governing Standards:** CIS Benchmarks (Docker, Kubernetes, AWS/Azure/GCP), NIST SP 800-190 (Container Security), NIST SP 800-204 (Microservices Security). All infrastructure code MUST be reviewed against the applicable benchmark.
+
+**CIS Benchmark Key Controls:**
+- **Docker CIS:** Non-root user, read-only root filesystem, no privileged containers, content trust enabled, resource limits, health checks defined.
+- **Kubernetes CIS:** Pod security standards (restricted), RBAC least privilege, network policies deny-by-default, etcd encryption, audit logging enabled, admission controllers (OPA/Kyverno).
+- **Cloud CIS (AWS/Azure/GCP):** IAM least privilege, MFA on root/admin, encryption at rest and in transit, VPC/network segmentation, logging to central SIEM, no public S3/storage buckets by default.
+
+**Supply Chain Security:**
+- Sign container images (cosign/Notary). Verify signatures before deployment.
+- Pin base images by SHA digest in production Dockerfiles.
+- Use SBOM generation (syft/trivy) for all container images.
+- Scan IaC with `checkov`, `tfsec`, or `terrascan` before committing.
 
 1. **Docker:**
    - `USER app` mandatory (never root). Minimal base images (alpine, distroless). Pin specific versions.

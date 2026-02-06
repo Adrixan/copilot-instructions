@@ -105,8 +105,27 @@ tests/
 </testing_protocol>
 
 <security_standards>
+**Governing Standards:** OWASP Top 10 (2021+), OWASP API Security Top 10 (2023+). All backend code MUST be reviewed against these checklists. Key categories:
+- **A01 Broken Access Control:** Enforce least privilege, deny by default, RBAC on every endpoint.
+- **A02 Cryptographic Failures:** TLS everywhere, Argon2/Bcrypt for passwords, no sensitive data in logs or URLs.
+- **A03 Injection:** Prepared statements / parameterized queries ONLY. Validate all inputs with schema types.
+- **A04 Insecure Design:** Threat model critical flows (auth, payments). Use abuse-case testing.
+- **A05 Security Misconfiguration:** No default credentials, disable debug in production, minimal error detail in responses.
+- **A06 Vulnerable Components:** `pip-audit`, `mvn dependency:check`, `composer audit` in CI. Block merge on known CVEs.
+- **A07 Auth Failures:** JWT with short expiry (15 min access, 7 day refresh). MFA for admins. Account lockout after failed attempts.
+- **A08 Data Integrity Failures:** Verify signatures on updates/serialized data. Use SRI for external resources.
+- **A09 Logging & Monitoring:** Structured JSON logs for auth events, access control failures, input validation failures. Alert on anomalies.
+- **A10 SSRF:** Validate and allowlist outbound URLs. Block internal/metadata endpoints (169.254.169.254).
+
+**OWASP API Security Top 10 (additional for APIs):**
+- Broken Object Level Authorization (BOLA): verify object ownership on every request.
+- Broken Authentication: rate-limit auth endpoints, use strong tokens.
+- Unrestricted Resource Consumption: paginate, rate-limit, set max request sizes.
+- Mass Assignment: use explicit DTOs/allowlists — never bind request body directly to models.
+
+**Implementation Checklist:**
 1. **Input Validation:** Use schema validation (Pydantic, Bean Validation, PHP attributes). Validate at API boundary.
-2. **Authentication:** Bcrypt/Argon2 for passwords. JWT with short expiry (15 min access, 7 day refresh). RBAC with least privilege. MFA for admins. See [examples/production/jwt_auth_fastapi.py](../examples/production/jwt_auth_fastapi.py).
+2. **Authentication:** Bcrypt/Argon2 for passwords. JWT with short expiry. RBAC with least privilege. MFA for admins. See [examples/production/jwt_auth_fastapi.py](../examples/production/jwt_auth_fastapi.py).
 3. **SQL Injection:** Prepared statements only. Never concatenate user input into queries.
 4. **Secrets:** Environment variables for dev/test, Vault/Secrets Manager for production. Never commit `.env` or credentials.
 5. **API Security:** Rate limiting, CORS whitelist, HTTPS only, security headers (CSP, HSTS, X-Frame-Options).

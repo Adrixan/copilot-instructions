@@ -110,6 +110,25 @@ See [examples/scripting/backup.Tests.ps1](../examples/scripting/backup.Tests.ps1
 
 </common_pitfalls>
 
+<security_standards>
+**Governing Standards:** CWE/SANS Top 25 (relevant entries), CIS Benchmarks (OS hardening scripts).
+
+**Key Risks for Scripts:**
+- **CWE-78 OS Command Injection:** Never pass unsanitized input to `eval`, `bash -c`, `Invoke-Expression`, or backtick execution. Use arrays for command construction, not string interpolation.
+- **CWE-22 Path Traversal:** Validate and canonicalize all file paths. Reject `..` sequences. Use `realpath` (Bash) or `Resolve-Path` (PowerShell) before operations.
+- **CWE-377 Insecure Temp Files:** Use `mktemp` (Bash) or `[System.IO.Path]::GetTempFileName()` (PowerShell). Never use predictable temp file names. Clean up via trap/finally.
+- **CWE-269 Privilege Escalation:** Scripts requiring elevated privileges must: document why, use `sudo` only for specific commands (not the entire script), and drop privileges as soon as possible.
+- **CWE-312 Cleartext Storage of Sensitive Info:** Never store passwords, tokens, or keys in script variables that get logged. Use `read -rs` (Bash) or `Get-Credential` (PowerShell) for interactive secrets. Mask sensitive output.
+
+**Implementation Checklist:**
+1. **Input Sanitization:** Validate all arguments. Reject unexpected characters. Allowlist, don't blocklist.
+2. **No Eval/Invoke-Expression:** Avoid dynamic code execution. If unavoidable, validate input against a strict allowlist.
+3. **File Permissions:** Set restrictive permissions on created files (`umask 077` / `icacls`). Never create world-readable files containing credentials.
+4. **Secure Defaults:** Scripts should fail-safe (strict mode). Default to non-destructive operations. Require explicit `--force` for dangerous actions.
+5. **Credential Handling:** Accept secrets via environment variables or stdin, never as command-line arguments (visible in `ps` output). Use `SecureString` in PowerShell.
+6. **Logging:** Never log sensitive values. Redact credentials in error messages. Log to stderr, not stdout (stdout may be piped elsewhere).
+</security_standards>
+
 <testing_validation>
 
 ## Testing

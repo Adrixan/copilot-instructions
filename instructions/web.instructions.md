@@ -94,6 +94,21 @@ workspace/
 </accessibility_standards>
 
 <security_standards>
+**Governing Standards:** OWASP Top 10 (2021+), OWASP Client-Side Security Top 10. All frontend code MUST be reviewed against these. Key categories:
+- **A03 Injection / XSS:** Never use `dangerouslySetInnerHTML` without `DOMPurify.sanitize()`. React escapes by default — don't bypass it. Sanitize all dynamic content rendered in the DOM.
+- **A05 Security Misconfiguration:** CSP must be set. No overly permissive CORS. Disable source maps in production.
+- **A06 Vulnerable Components:** `npm audit` / Snyk / Dependabot in CI. Block merge on known CVEs in client-side dependencies.
+- **A07 Auth Failures:** JWTs in httpOnly cookies (not localStorage). Auto-logout on inactivity. CSRF tokens for state-changing operations.
+- **A08 Data Integrity Failures:** Subresource Integrity (SRI) for all external scripts/styles. Verify CDN content hashes.
+- **A09 Logging & Monitoring:** Client-side error tracking (Sentry). Never log sensitive data (tokens, PII) to console in production.
+
+**OWASP Client-Side Top 10 (additional):**
+- DOM-based XSS: avoid `eval()`, `innerHTML`, `document.write()`. Use framework-safe rendering.
+- Sensitive data in client storage: never store tokens/secrets in localStorage or sessionStorage.
+- Improper input validation in client: always validate on the server too — client validation is UX, not security.
+- Third-party scripts: audit and pin versions of analytics, chat widgets, and ad scripts. Use CSP to restrict their scope.
+
+**Implementation Checklist:**
 1. **CSP:** `default-src 'self'`; whitelist specific script/style/img/connect sources with nonces.
 2. **XSS:** Never use `dangerouslySetInnerHTML` without `DOMPurify.sanitize()`. React escapes by default — don't bypass it.
 3. **Input Validation:** Schema validation (Zod) at form boundaries. Validate before submission.
