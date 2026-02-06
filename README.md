@@ -46,7 +46,7 @@ Located in [`examples/`](examples/):
 
 ```bash
 cd /path/to/your/project
-git submodule add https://github.com/yourusername/copilot-instructions.git .github/copilot-instructions
+git submodule add https://github.com/Adrixan/copilot-instructions.git .github/copilot-instructions
 ln -s copilot-instructions/copilot-instructions.md .github/copilot-instructions.md
 git add .gitmodules .github/
 git commit -m "Add Copilot instructions as submodule"
