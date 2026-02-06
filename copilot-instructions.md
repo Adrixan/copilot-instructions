@@ -31,6 +31,63 @@ State file should capture: OS, package manager, shell, stack, demographics, acce
 7. **Testing:** TDD for business logic by default. Clarify: TDD applies to logic, not config/docs.
 </protocol_initialization>
 
+<protocol_requirements>
+**TRIGGER:** After initialization is complete, OR when the user describes a new feature, user story, or task that involves non-trivial implementation (more than a single obvious change).
+
+**PURPOSE:** Ensure a shared, unambiguous understanding of what needs to be built before writing any code. This loop MUST complete before implementation begins.
+
+**WORKFLOW:**
+
+1. **Gather** — Analyze the user's request and identify:
+   - What is explicitly stated (functional requirements)
+   - What is implied but not stated (assumptions)
+   - What is missing or ambiguous (open questions)
+   - What constraints exist (non-functional requirements)
+
+2. **Ask** — Present findings to the user in a structured format:
+
+   **Open questions** (free-form answers needed):
+   - Who are the users/actors?
+   - What problem does this solve? What is the expected outcome?
+   - Are there existing systems, APIs, or data sources this must integrate with?
+   - Are there known constraints (performance, compliance, timeline)?
+
+   **Options** (choose from alternatives):
+   - Where multiple valid approaches exist, present 2–4 options with brief pros/cons.
+   - Where a default is industry-standard, state the recommendation and ask for confirmation.
+   - Examples: data storage strategy, auth mechanism, API style (REST/GraphQL/gRPC), sync vs. async processing.
+
+   **Assumptions** (confirm or correct):
+   - List every assumption made from the user's description.
+   - Mark each as "Assumed — please confirm or correct."
+
+3. **Refine** — After receiving answers:
+   - Identify any NEW questions or ambiguities raised by the answers.
+   - If new gaps exist, return to step 2 with only the new/updated questions.
+   - Continue until no open questions remain.
+
+4. **Summarize** — Present a requirements summary:
+   - **Functional requirements:** numbered list of what the system must do.
+   - **Non-functional requirements:** performance, security, accessibility, i18n constraints.
+   - **Out of scope:** explicitly state what is NOT included to prevent scope creep.
+   - **Key decisions:** record chosen options with rationale.
+   - **Acceptance criteria:** measurable conditions for each requirement to be considered done.
+
+5. **Confirm** — Ask the user explicitly:
+   > "Are these requirements complete and correct? Should I proceed with implementation, or is there anything to add or change?"
+
+   **EXIT CONDITION:** The loop ends ONLY when the user explicitly confirms that all requirements are understood and agrees to proceed. Any response that adds, changes, or questions a requirement restarts from step 3 (Refine).
+
+**RECORDING:** Once confirmed, append the requirements summary to `.copilot/project-state.md` under a `## Requirements` section (or a feature-specific heading like `## Requirements: [Feature Name]`). Reference this during implementation to stay aligned.
+
+**RULES:**
+- Never skip this loop for non-trivial work. For trivial changes (typo fix, config tweak), it is acceptable to skip.
+- Never assume a requirement is obvious — if it is not stated, ask.
+- Present options neutrally; recommend when one option is clearly superior, but let the user decide.
+- Keep questions batched and organized — do not ask one question at a time when multiple can be grouped.
+- If the user provides a detailed spec or user story upfront, still validate understanding by summarizing and confirming rather than asking redundant questions.
+</protocol_requirements>
+
 <workflow_mandates>
 1. **TDD (With Practical Exceptions):**
 
