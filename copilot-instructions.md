@@ -11,9 +11,9 @@ Task Lifecycle:
 2. Profile the user (user_profiling) — ask once per project if no profile recorded.
 3. Classify: new project → protocol_initialization; non-trivial change → protocol_requirements; trivial fix → proceed directly.
 4. Requirements and design: Gather → Refine → Decide → Confirm. No code until confirmed.
-5. Implement with TDD, security, and code quality mandates.
-6. Validate against quality_gates.
-7. Update `.copilot/project-state.md`.
+5. Scaffold: Set up project structure, configuration, dependencies, i18n framework — no feature logic yet.
+6. Implement via protocol_development_loop (one feature at a time).
+7. Update `.copilot/project-state.md` after every loop iteration.
 
 Steps 2–4 NOT optional for non-trivial work.
 </system_role>
@@ -31,8 +31,15 @@ When rules conflict, apply this precedence (highest first):
 <state_management>
 File: `.copilot/project-state.md`. If missing → run protocol_initialization first.
 
-READ before every task. WRITE on major decisions. APPEND confirmed requirements under `## Requirements: [Feature] — [Date]`.
-Captures: OS, package manager, shell, stack, demographics, accessibility, localization, architecture, testing, requirements log, decisions log.
+READ at the start of every conversation turn. WRITE after every development loop iteration, major decision, or completed feature. APPEND confirmed requirements under `## Requirements: [Feature] — [Date]`.
+
+Captures: OS, package manager, shell, stack, demographics, accessibility, localization, architecture, testing, requirements log, decisions log, feature completion status, skipped-tests log.
+
+The state file is the **primary context recovery mechanism**. Always keep it current so that a fresh conversation can resume work without re-reading the entire codebase. Include:
+- Current feature in progress and its status (tests written / implementing / checkpoint)
+- List of completed features with test pass/fail status
+- Next planned feature
+- Any pending user feedback or open questions
 </state_management>
 
 <user_profiling>
@@ -114,6 +121,30 @@ When multiple valid approaches exist:
 
 Record all decisions in state file with date and context. Applies at ALL project stages.
 </decision_protocol>
+
+<protocol_development_loop>
+Trigger: After scaffolding is complete and requirements are confirmed.
+Goal: Prevent incomplete features, missing strings, and logic errors by validating each feature before starting the next.
+
+Workflow — repeat for each feature:
+1. **Write tests first.** Cover the happy path, edge cases, and error handling for the current feature. Include localization/i18n string assertions where applicable.
+2. **Implement the feature.** Make all tests pass. Ensure every user-facing string uses the i18n system — no hardcoded text. Verify completeness against the acceptance criteria in the state file.
+3. **Run all tests.** Execute the full test suite, not just the new tests. Fix any regressions before proceeding.
+4. **Checkpoint — ask the user:**
+   Present a brief summary: feature name, tests written, tests passing/failing, and any open questions.
+   The user may respond:
+   - **Approve** → mark feature complete in state file, proceed to next feature.
+   - **Correct** → apply the user's feedback, re-run tests, return to step 4.
+   - **Skip tests** → the user accepts the current state without test validation; note this in the state file and proceed.
+5. **Update state file.** Record completed feature, test status, any skipped tests, and decisions made.
+
+Rules:
+- Never implement more than one feature between checkpoints.
+- Never skip the checkpoint unless the user has explicitly pre-approved batch mode.
+- If a test run reveals failures in previously approved features, fix those regressions before the checkpoint.
+- Localization: verify all new strings exist in every configured locale before the checkpoint.
+- Keep the state file current — it is the primary mechanism for resuming work with minimal context.
+</protocol_development_loop>
 
 <quality_gates>
 Before committing:
