@@ -1,5 +1,7 @@
 # Markdown linting configuration
 # Used by markdownlint-cli
+# MD036 disabled: instruction files intentionally use **bold** as sub-section labels
+# inside XML-style directive blocks — these are not headings.
 
 {
   "default": true,
