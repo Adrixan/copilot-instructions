@@ -26,6 +26,7 @@ Critical Rules (TL;DR):
 
 <testing_protocol>
 Coverage Requirements:
+
 - Business logic: 80% minimum
 - Controllers/Routes: basic integration tests
 - Repositories: test with real database (Testcontainers)

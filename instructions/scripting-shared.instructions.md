@@ -10,6 +10,7 @@ Focus: Cross-platform compatibility, Error Handling, Idempotency
 
 <quick_reference>
 Critical Rules (TL;DR):
+
 - Error Handling: Check exit codes, provide meaningful errors to stderr
 - Idempotency: Safe to run multiple times without side effects
 - Logging: stderr for errors/diagnostics, stdout for output
@@ -43,6 +44,7 @@ Checklist:
 </security_standards>
 
 <validation_checklist>
+
 - [ ] Strict mode enabled
 - [ ] Variables quoted / parameters validated
 - [ ] Exit codes checked / errors handled

@@ -38,6 +38,7 @@ workspace/
 ├── packages/      # ui (shared components), utils, i18n
 └── infrastructure/
 ```
+
 </architecture_standards>
 
 <technology_standards>

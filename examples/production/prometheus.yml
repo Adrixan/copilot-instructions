@@ -49,7 +49,7 @@ scrape_configs:
     # basic_auth:
     #   username: 'prometheus'
     #   password: 'secure-password'
-    
+
     # Relabeling for service discovery
     relabel_configs:
       - source_labels: [__address__]
