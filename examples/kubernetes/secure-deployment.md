@@ -3,6 +3,7 @@
 ## Secure Deployment
 
 ### ❌ Bad Example (Insecure)
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -27,6 +28,7 @@ spec:
 ```
 
 **Problems:**
+
 - Uses `:latest` tag (unpredictable)
 - Runs as root (security risk)
 - No resource limits (can consume all node resources)
@@ -36,6 +38,7 @@ spec:
 ---
 
 ### ✅ Good Example (Secure & Production-Ready)
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -192,6 +195,7 @@ spec:
 ```
 
 **Improvements:**
+
 - ✅ Pinned image version with digest
 - ✅ Non-root user with explicit UID
 - ✅ Read-only root filesystem (with temp volumes)
@@ -207,6 +211,7 @@ spec:
 ## Network Policies
 
 ### Default Deny All Traffic
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -221,6 +226,7 @@ spec:
 ```
 
 ### Allow Specific Traffic
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -279,6 +285,7 @@ spec:
 ## RBAC Configuration
 
 ### ❌ Bad (Too Permissive)
+
 ```yaml
 # DON'T DO THIS!
 apiVersion: rbac.authorization.k8s.io/v1
@@ -298,6 +305,7 @@ roleRef:
 ---
 
 ### ✅ Good (Least Privilege)
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -336,6 +344,7 @@ roleRef:
 ## Secrets Management
 
 ### ❌ Bad (Plain ConfigMap)
+
 ```yaml
 # NEVER store secrets in ConfigMaps!
 apiVersion: v1
@@ -347,6 +356,7 @@ data:
 ```
 
 ### ✅ Better (Kubernetes Secret)
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -360,6 +370,7 @@ data:
 ```
 
 **Create from command line:**
+
 ```bash
 kubectl create secret generic webapp-secrets \
   --from-literal=db-password='SuperSecret123!' \
@@ -371,11 +382,13 @@ kubectl create secret generic webapp-secrets \
 ### ✅ Best (Sealed Secrets)
 
 **Install Sealed Secrets Controller:**
+
 ```bash
 kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.24.0/controller.yaml
 ```
 
 **Create sealed secret:**
+
 ```bash
 # Create a regular secret (don't apply it!)
 kubectl create secret generic webapp-secrets \
@@ -388,6 +401,7 @@ kubeseal -o yaml > sealed-secret.yaml
 ```
 
 **sealed-secret.yaml (safe to commit):**
+
 ```yaml
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
@@ -404,12 +418,14 @@ spec:
 ### ✅ Best (External Secrets Operator)
 
 **Install External Secrets Operator:**
+
 ```bash
 helm repo add external-secrets https://charts.external-secrets.io
 helm install external-secrets external-secrets/external-secrets -n external-secrets-system --create-namespace
 ```
 
 **Configure SecretStore:**
+
 ```yaml
 apiVersion: external-secrets.io/v1beta1
 kind: SecretStore
@@ -518,6 +534,7 @@ spec:
 ## Validation
 
 ### Dry-run before apply
+
 ```bash
 # Server-side dry run (validates against actual cluster state)
 kubectl apply --dry-run=server -f deployment.yaml

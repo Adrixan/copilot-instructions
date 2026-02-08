@@ -1,5 +1,17 @@
 {
     "chat.tools.terminal.autoApprove": {
-        "git add": true
+        "git add": true,
+        "/^cd /home/Adrixan/code/copilot-instructions && python3 -c \"\nimport re\n\ndef validate_markdown\\(filepath\\):\n    with open\\(filepath\\) as f:\n        lines = f\\.read\\(\\)\\.split\\('\\\\n'\\)\n    \n    issues = \\[\\]\n    in_code = False\n    \n    for i, line in enumerate\\(lines\\):\n        stripped = line\\.strip\\(\\)\n        if stripped\\.startswith\\('\\\\`\\\\`\\\\`'\\):\n            if not in_code:\n                # Opening fence\n                in_code = True\n                # MD040: check for language\n                if stripped == '\\\\`\\\\`\\\\`':\n                    issues\\.append\\(f'  Line \\{i\\+1\\}: MD040 - code block missing language'\\)\n                # MD031: blank line before\n                if i > 0 and lines\\[i-1\\]\\.strip\\(\\) != '':\n                    issues\\.append\\(f'  Line \\{i\\+1\\}: MD031 - no blank line before code block'\\)\n            else:\n                # Closing fence\n                in_code = False\n                # MD031: blank line after\n                if i \\+ 1 < len\\(lines\\) and lines\\[i\\+1\\]\\.strip\\(\\) != '':\n                    issues\\.append\\(f'  Line \\{i\\+1\\}: MD031 - no blank line after code block'\\)\n            continue\n        \n        if in_code:\n            continue\n        \n        is_heading = bool\\(re\\.match\\(r'\\^#\\{1,6\\}\\\\s', line\\)\\)\n        is_list = bool\\(re\\.match\\(r'\\^\\(\\\\s\\*\\[-\\*\\+\\]\\\\s\\|\\\\s\\*\\\\d\\+\\[\\\\\\.\\\\\\)\\]\\\\s\\)', line\\)\\)\n        is_blank = stripped == ''\n        \n        if is_heading:\n            # MD022: blank before\n            if i > 0 and lines\\[i-1\\]\\.strip\\(\\) != '':\n                issues\\.append\\(f'  Line \\{i\\+1\\}: MD022 - no blank line before heading: \\{stripped\\[:50\\]\\}'\\)\n            # MD022: blank after\n            if i \\+ 1 < len\\(lines\\) and lines\\[i\\+1\\]\\.strip\\(\\) != '':\n                issues\\.append\\(f'  Line \\{i\\+1\\}: MD022 - no blank line after heading: \\{stripped\\[:50\\]\\}'\\)\n        \n        if is_list:\n            prev = lines\\[i-1\\] if i > 0 else ''\n            prev_is_list = bool\\(re\\.match\\(r'\\^\\(\\\\s\\*\\[-\\*\\+\\]\\\\s\\|\\\\s\\*\\\\d\\+\\[\\\\\\.\\\\\\)\\]\\\\s\\)', prev\\)\\)\n            if i > 0 and prev\\.strip\\(\\) != '' and not prev_is_list:\n                issues\\.append\\(f'  Line \\{i\\+1\\}: MD032 - no blank line before list'\\)\n    \n    return issues\n\nfor f in \\['examples/ops/pitfalls\\.md', 'examples/terraform/secure-config\\.md',\n          'examples/kubernetes/secure-deployment\\.md', 'examples/ansible/secure-playbook\\.md'\\]:\n    issues = validate_markdown\\(f\\)\n    if issues:\n        print\\(f'\\\\n\\{f\\}: \\{len\\(issues\\)\\} remaining issues'\\)\n        for iss in issues:\n            print\\(iss\\)\n    else:\n        print\\(f'\\{f\\}: CLEAN'\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^python3 -c \"import json; json\\.load\\(open\\('\\.markdownlint\\.json'\\)\\)\" && echo \"JSON valid\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/Adrixan/code/copilot-instructions && python3 -c \"\nimport json, re\nwith open\\('\\.markdownlint\\.json'\\) as f:\n    content = f\\.read\\(\\)\n# Strip comments\ncontent = re\\.sub\\(r'#\\.\\*\\$', '', content, flags=re\\.MULTILINE\\)\njson\\.loads\\(content\\)\nprint\\('JSON valid'\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

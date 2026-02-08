@@ -3,6 +3,10 @@
 
 extends: default
 
+ignore: |
+  examples/ci/terraform-pipeline.yml
+  node_modules/
+
 rules:
   line-length:
     max: 120
@@ -16,3 +20,4 @@ rules:
   comments-indentation: disable
   truthy:
     allowed-values: ['true', 'false', 'yes', 'no']
+    check-keys: false

@@ -20,13 +20,20 @@ Critical Rules (TL;DR):
 Governing Standards: CWE/SANS Top 25 (relevant entries), CIS Benchmarks (OS hardening scripts).
 
 Key Risks:
-- CWE-78 OS Command Injection: Never pass unsanitized input to `eval`, `bash -c`, `Invoke-Expression`. Use arrays for command construction, not string interpolation.
+
+- CWE-78 OS Command Injection: Never pass unsanitized input to `eval`,
+  `bash -c`, `Invoke-Expression`.
+  Use arrays for command construction, not string interpolation.
 - CWE-22 Path Traversal: Validate and canonicalize all file paths. Reject `..` sequences.
-- CWE-377 Insecure Temp Files: Use `mktemp` (Bash) or `[System.IO.Path]::GetTempFileName()` (PowerShell). Clean up via trap/finally.
-- CWE-269 Privilege Escalation: Document why elevated privileges are needed. Use `sudo` only for specific commands, drop privileges ASAP.
-- CWE-312 Cleartext Storage: Never store secrets in script variables that get logged. Use `read -rs` / `Get-Credential`.
+- CWE-377 Insecure Temp Files: Use `mktemp` (Bash) or
+  `[System.IO.Path]::GetTempFileName()` (PowerShell). Clean up via trap/finally.
+- CWE-269 Privilege Escalation: Document why elevated privileges are needed.
+  Use `sudo` only for specific commands, drop privileges ASAP.
+- CWE-312 Cleartext Storage: Never store secrets in script variables that get logged.
+  Use `read -rs` / `Get-Credential`.
 
 Checklist:
+
 1. Validate all arguments. Allowlist, don't blocklist.
 2. No `eval`/`Invoke-Expression`. If unavoidable, validate against strict allowlist.
 3. Restrictive file permissions (`umask 077` / `icacls`).
@@ -46,6 +53,8 @@ Checklist:
 </validation_checklist>
 
 <examples>
-- Bash: [examples/scripting/deploy.sh](../examples/scripting/deploy.sh) + [examples/scripting/test_deploy.bats](../examples/scripting/test_deploy.bats)
-- PowerShell: [examples/scripting/backup.ps1](../examples/scripting/backup.ps1) + [examples/scripting/backup.Tests.ps1](../examples/scripting/backup.Tests.ps1)
+- Bash: [examples/scripting/deploy.sh](../examples/scripting/deploy.sh) +
+  [examples/scripting/test_deploy.bats](../examples/scripting/test_deploy.bats)
+- PowerShell: [examples/scripting/backup.ps1](../examples/scripting/backup.ps1) +
+  [examples/scripting/backup.Tests.ps1](../examples/scripting/backup.Tests.ps1)
 </examples>

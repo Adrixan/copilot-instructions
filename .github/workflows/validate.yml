@@ -1,6 +1,6 @@
 name: Validate Instructions
 
-on:
+"on":
   push:
     branches: [main, develop]
   pull_request:
@@ -10,6 +10,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  security-events: write
 
 jobs:
   lint-markdown:
@@ -125,10 +126,10 @@ jobs:
             "copilot-instructions.md"
             "README.md"
             "LICENSE"
-            "instructions/ops.instructions.md"
-            "instructions/backend.instructions.md"
+            "instructions/ops-shared.instructions.md"
+            "instructions/backend-shared.instructions.md"
             "instructions/web.instructions.md"
-            "instructions/scripting.instructions.md"
+            "instructions/scripting-shared.instructions.md"
           )
 
           for file in "${required_files[@]}"; do
@@ -142,10 +143,10 @@ jobs:
       - name: Validate instruction files have applyTo
         run: |
           instruction_files=(
-            "instructions/ops.instructions.md"
-            "instructions/backend.instructions.md"
+            "instructions/ops-shared.instructions.md"
+            "instructions/backend-shared.instructions.md"
             "instructions/web.instructions.md"
-            "instructions/scripting.instructions.md"
+            "instructions/scripting-shared.instructions.md"
           )
 
           for file in "${instruction_files[@]}"; do

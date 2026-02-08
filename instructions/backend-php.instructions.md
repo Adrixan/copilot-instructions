@@ -3,6 +3,7 @@ applyTo:
   - "**/*.php"
 ---
 <php_standards>
+
 ## PHP (Laravel / Symfony)
 
 - **PHP 8.3+** with `declare(strict_types=1);` at top of EVERY file

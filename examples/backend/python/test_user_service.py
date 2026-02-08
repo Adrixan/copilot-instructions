@@ -151,7 +151,7 @@ class TestCreateUser:
         ("short", "at least 12 characters"),
         ("nouppercase123", "uppercase letter"),
         ("NOLOWERCASE123", "lowercase letter"),
-        ("NoNumbers", "one number"),
+        ("NoNumbersHere", "one number"),
     ])
     def test_rejects_weak_password(
         self,

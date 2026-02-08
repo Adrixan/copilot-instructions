@@ -3,6 +3,7 @@ applyTo:
   - "**/*.py"
 ---
 <python_standards>
+
 ## Python (FastAPI / Django / Flask)
 
 - **Python 3.12+** with mandatory type hints on all functions/methods
@@ -14,7 +15,9 @@ applyTo:
 - **Linting:** Ruff (replaces Black + isort + flake8) + mypy
 - **SAST:** Semgrep or Bandit in CI
 
-**Type Safety:** `strict: true` in mypy config. All functions must have return type annotations. Use `TypeGuard` and `TypeIs` for type narrowing.
+**Type Safety:** `strict: true` in mypy config.
+All functions must have return type annotations.
+Use `TypeGuard` and `TypeIs` for type narrowing.
 
 ```python
 # ❌ NEVER (SQL Injection)

@@ -233,10 +233,14 @@ class UserService:
             raise WeakPasswordError("Password must be at least 12 characters")
         
         if not any(c.isupper() for c in password):
-            raise WeakPasswordError("Password must contain at least one uppercase letter")
+            raise WeakPasswordError(
+                "Password must contain at least one uppercase letter"
+            )
         
         if not any(c.islower() for c in password):
-            raise WeakPasswordError("Password must contain at least one lowercase letter")
+            raise WeakPasswordError(
+                "Password must contain at least one lowercase letter"
+            )
         
         if not any(c.isdigit() for c in password):
             raise WeakPasswordError("Password must contain at least one number")

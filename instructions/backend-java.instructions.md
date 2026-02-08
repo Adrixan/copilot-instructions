@@ -3,10 +3,12 @@ applyTo:
   - "**/*.java"
 ---
 <java_standards>
+
 ## Java (Spring Boot / Jakarta EE)
 
 - **Java 21 LTS** with **Spring Boot 3.3+**
-- **Virtual threads** (`@Async` with virtual thread executor, or `Executors.newVirtualThreadPerTaskExecutor()`) for I/O-bound workloads
+- **Virtual threads** (`@Async` with virtual thread executor, or
+  `Executors.newVirtualThreadPerTaskExecutor()`) for I/O-bound workloads
 - **Pattern matching** for `instanceof`, `switch` expressions, and record patterns
 - **Sequenced collections** (`SequencedCollection`, `SequencedMap`) for ordered access
 - **Records** for DTOs, value objects, and sealed type hierarchies

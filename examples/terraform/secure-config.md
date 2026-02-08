@@ -3,6 +3,7 @@
 ## Remote State Configuration
 
 ### ❌ Bad Example (Local State)
+
 ```hcl
 # No backend configuration - uses local state!
 terraform {
@@ -15,6 +16,7 @@ resource "aws_s3_bucket" "data" {
 ```
 
 **Problems:**
+
 - State stored locally (risk of loss, no collaboration)
 - No state locking (concurrent modifications can corrupt state)
 - No encryption at rest
@@ -25,6 +27,7 @@ resource "aws_s3_bucket" "data" {
 ### ✅ Good Example (Remote State with Locking)
 
 **backend.tf**
+
 ```hcl
 terraform {
   required_version = ">= 1.5.0, < 2.0.0"
@@ -51,6 +54,7 @@ terraform {
 ```
 
 **Prerequisites (Bootstrap Script):**
+
 ```bash
 #!/bin/bash
 # Create S3 bucket for state
@@ -89,6 +93,7 @@ aws dynamodb create-table \
 ## Secrets Management
 
 ### ❌ Bad Example (Hardcoded Secrets)
+
 ```hcl
 resource "aws_db_instance" "main" {
   allocated_storage = 20
@@ -101,6 +106,7 @@ resource "aws_db_instance" "main" {
 ```
 
 ### ❌ Also Bad (Committed .tfvars)
+
 ```hcl
 # production.tfvars (committed to Git)
 db_password = "SuperSecret123!"
@@ -111,6 +117,7 @@ db_password = "SuperSecret123!"
 ### ✅ Good Example (Environment Variables)
 
 **variables.tf**
+
 ```hcl
 variable "db_password" {
   description = "Database master password"
@@ -120,6 +127,7 @@ variable "db_password" {
 ```
 
 **main.tf**
+
 ```hcl
 resource "aws_db_instance" "main" {
   allocated_storage = 20
@@ -134,6 +142,7 @@ resource "aws_db_instance" "main" {
 ```
 
 **Usage:**
+
 ```bash
 # Set via environment variable
 export TF_VAR_db_password="SuperSecret123!"
@@ -150,6 +159,7 @@ terraform apply -var="db_password=$(aws secretsmanager get-secret-value --secret
 ### ✅ Better: Use AWS Secrets Manager
 
 **main.tf**
+
 ```hcl
 # Generate a random password
 resource "random_password" "db_master" {
@@ -191,7 +201,8 @@ output "db_password_secret_arn" {
 ## Module Structure & Versioning
 
 ### ✅ Standard Module Structure
-```
+
+```text
 terraform-aws-vpc/
 ├── README.md
 ├── main.tf
@@ -207,6 +218,7 @@ terraform-aws-vpc/
 ```
 
 **versions.tf**
+
 ```hcl
 terraform {
   required_version = ">= 1.5.0, < 2.0.0"
@@ -221,6 +233,7 @@ terraform {
 ```
 
 **variables.tf**
+
 ```hcl
 variable "vpc_cidr" {
   description = "CIDR block for VPC (e.g., 10.0.0.0/16)"
@@ -248,6 +261,7 @@ variable "environment" {
 ## Protecting Stateful Resources
 
 ### ✅ Lifecycle Policies
+
 ```hcl
 resource "aws_s3_bucket" "data" {
   bucket = "critical-data-${var.environment}"
@@ -281,6 +295,7 @@ resource "aws_db_instance" "main" {
 ## for_each vs count
 
 ### ❌ Bad (Using count)
+
 ```hcl
 variable "user_names" {
   type = list(string)
@@ -299,6 +314,7 @@ resource "aws_iam_user" "users" {
 ---
 
 ### ✅ Good (Using for_each)
+
 ```hcl
 variable "user_names" {
   type = set(string)
@@ -318,6 +334,7 @@ resource "aws_iam_user" "users" {
 ## Data Sources for Dynamic Values
 
 ### ❌ Bad (Hardcoded AMI)
+
 ```hcl
 resource "aws_instance" "web" {
   ami           = "ami-0c55b159cbfafe1f0"  # Will become outdated!
@@ -326,6 +343,7 @@ resource "aws_instance" "web" {
 ```
 
 ### ✅ Good (Dynamic Lookup)
+
 ```hcl
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
@@ -360,6 +378,7 @@ resource "aws_instance" "web" {
 ### Pre-commit Hook Configuration
 
 **.pre-commit-config.yaml**
+
 ```yaml
 repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
@@ -375,6 +394,7 @@ repos:
 ```
 
 **Install:**
+
 ```bash
 pip install pre-commit
 pre-commit install
@@ -383,6 +403,7 @@ pre-commit install
 ---
 
 ### Manual Scanning
+
 ```bash
 # Format check
 terraform fmt -check -recursive

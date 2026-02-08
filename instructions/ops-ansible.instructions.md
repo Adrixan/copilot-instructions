@@ -4,6 +4,7 @@ applyTo:
   - "**/playbooks/**"
 ---
 <ansible_standards>
+
 ## Ansible
 
 - All playbooks must be idempotent. Ansible Vault for sensitive variables. `become: yes` with documented justification.
@@ -12,6 +13,7 @@ applyTo:
 Performance: `gather_facts: no` when unneeded. SSH pipelining for 2-5x speedup. Tune `forks`.
 
 Pitfalls:
+
 1. ❌ `shell`/`command` without `creates`/`changed_when` → ✅ Use native modules (apt, copy, template) for idempotency.
 2. ❌ Undocumented `become: yes` → ✅ Comment why privilege escalation is needed on every task.
 3. ❌ Secrets in plaintext vars → ✅ Use Ansible Vault or external secrets lookup.

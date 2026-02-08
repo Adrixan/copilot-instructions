@@ -3,9 +3,11 @@ applyTo:
   - "**/*.ps1"
 ---
 <powershell_standards>
+
 ## PowerShell
 
 ### Preamble (MANDATORY)
+
 ```powershell
 <#
 .SYNOPSIS
@@ -27,6 +29,7 @@ $ErrorActionPreference = 'Stop'
 ```
 
 ### Key Rules
+
 - Verb-Noun naming: `Get-UserData`, `Set-Configuration` (approved verbs only)
 - `[CmdletBinding()]` on all functions for `-Verbose`, `-WhatIf` support
 - Parameter validation: `[ValidateNotNullOrEmpty()]`, `[ValidateSet()]`, `[ValidateScript()]`
@@ -37,11 +40,13 @@ $ErrorActionPreference = 'Stop'
 - Cross-platform: Use `$IsWindows`/`$IsLinux`/`$IsMacOS` and `Join-Path` for paths
 
 ### Pitfalls
+
 1. ❌ Missing `-ErrorAction Stop` → ✅ Non-terminating errors silently continue. Always add `-ErrorAction Stop`.
 2. ❌ Using `==` for comparison → ✅ PowerShell uses `-eq`, `-gt`, `-like`, `-match` operators.
 3. ❌ No `SupportsShouldProcess` on destructive functions → ✅ Add it to enable safe `-WhatIf` testing.
 
 ### Testing
+
 - Pester — `Describe/It/Should` pattern
 - Static Analysis: PSScriptAnalyzer
 

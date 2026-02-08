@@ -3,6 +3,7 @@
 ## Secure Playbook Structure
 
 ### ❌ Bad Example (Insecure)
+
 ```yaml
 ---
 - hosts: webservers
@@ -23,6 +24,7 @@
 ```
 
 **Problems:**
+
 - Using `shell` with `sudo` instead of proper `become`
 - Hardcoded secrets in playbook
 - Non-idempotent tasks
@@ -33,6 +35,7 @@
 ### ✅ Good Example (Secure & Idempotent)
 
 **playbook.yml**
+
 ```yaml
 ---
 - name: Configure web servers
@@ -115,6 +118,7 @@
 ---
 
 **vars/main.yml** (non-sensitive variables)
+
 ```yaml
 ---
 nginx_worker_processes: 4
@@ -126,6 +130,7 @@ db_user: webapp_user
 ---
 
 **vault.yml** (encrypted with ansible-vault)
+
 ```yaml
 ---
 # Encrypt with: ansible-vault encrypt vault.yml
@@ -139,6 +144,7 @@ api_key: !vault |
 ```
 
 **Create encrypted variable:**
+
 ```bash
 # Encrypt entire file
 ansible-vault encrypt vault.yml
@@ -154,6 +160,7 @@ ansible-vault edit vault.yml
 ```
 
 **Run playbook with vault:**
+
 ```bash
 # Prompt for vault password
 ansible-playbook playbook.yml --ask-vault-pass
@@ -170,6 +177,7 @@ ansible-playbook playbook.yml --vault-id dev@prompt --vault-id prod@~/.vault_pas
 ## Idempotency Examples
 
 ### ❌ Bad (Non-Idempotent)
+
 ```yaml
 - name: Add line to config
   shell: echo "export PATH=$PATH:/opt/bin" >> ~/.bashrc
@@ -177,6 +185,7 @@ ansible-playbook playbook.yml --vault-id dev@prompt --vault-id prod@~/.vault_pas
 ```
 
 ### ✅ Good (Idempotent with lineinfile)
+
 ```yaml
 - name: Add /opt/bin to PATH
   lineinfile:
@@ -189,6 +198,7 @@ ansible-playbook playbook.yml --vault-id dev@prompt --vault-id prod@~/.vault_pas
 ---
 
 ### ❌ Bad (Shell with side effects)
+
 ```yaml
 - name: Download file
   shell: wget https://example.com/file.tar.gz
@@ -196,6 +206,7 @@ ansible-playbook playbook.yml --vault-id dev@prompt --vault-id prod@~/.vault_pas
 ```
 
 ### ✅ Good (Using get_url module)
+
 ```yaml
 - name: Download file
   get_url:
@@ -360,6 +371,7 @@ ansible-playbook playbook.yml --vault-id dev@prompt --vault-id prod@~/.vault_pas
 ## Testing and Validation
 
 ### Check Mode (Dry Run)
+
 ```bash
 # Run in check mode - no changes made
 ansible-playbook playbook.yml --check
@@ -369,6 +381,7 @@ ansible-playbook playbook.yml --check --diff
 ```
 
 ### Linting
+
 ```bash
 # Install ansible-lint
 pip install ansible-lint
@@ -383,6 +396,7 @@ ansible-lint -t security playbook.yml
 ### Molecule Testing Framework
 
 **molecule/default/molecule.yml**
+
 ```yaml
 ---
 dependency:
@@ -400,6 +414,7 @@ verifier:
 ```
 
 **Run tests:**
+
 ```bash
 molecule test
 ```
@@ -440,6 +455,7 @@ molecule test
 ```
 
 **ansible.cfg performance tuning:**
+
 ```ini
 [defaults]
 forks = 20  # Increase parallelism (default: 5)

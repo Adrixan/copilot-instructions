@@ -23,17 +23,20 @@ git submodule add https://github.com/yourusername/copilot-instructions.git .gith
 ### Step 2: Create Reference
 
 **Option A: Symlink (small/mixed projects)**
+
 ```bash
 cd .github
 ln -s copilot-instructions/copilot-instructions.md copilot-instructions.md
 ```
 
 Windows (PowerShell as Administrator):
+
 ```powershell
 New-Item -ItemType SymbolicLink -Path "copilot-instructions.md" -Target "copilot-instructions\copilot-instructions.md"
 ```
 
 **Option B: Domain-specific link (recommended for large projects to avoid timeouts)**
+
 ```bash
 cd .github
 ln -s copilot-instructions/instructions/backend.instructions.md copilot-instructions.md
@@ -53,7 +56,7 @@ git commit -m "Add Copilot instructions as submodule"
 
 ## Directory Structure
 
-```
+```text
 your-project/
 ├── .gitmodules
 ├── .github/
@@ -68,12 +71,14 @@ your-project/
 ## Common Operations
 
 **Clone with submodules:**
+
 ```bash
 git clone --recursive https://github.com/yourorg/your-project.git
 # Or after clone: git submodule init && git submodule update
 ```
 
 **Update to latest:**
+
 ```bash
 git submodule update --remote --merge
 git add .github/copilot-instructions
@@ -81,6 +86,7 @@ git commit -m "Update Copilot instructions"
 ```
 
 **Pin to specific version:**
+
 ```bash
 cd .github/copilot-instructions
 git checkout v1.2.0
@@ -129,6 +135,7 @@ git push --tags
 ## CI/CD Integration
 
 **GitHub Actions:**
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -137,12 +144,14 @@ steps:
 ```
 
 **GitLab CI:**
+
 ```yaml
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 ```
 
 **Jenkins:**
+
 ```groovy
 checkout([$class: 'GitSCM', extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]]])
 ```
@@ -150,7 +159,7 @@ checkout([$class: 'GitSCM', extensions: [[$class: 'SubmoduleOption', recursiveSu
 ## Troubleshooting
 
 | Problem | Solution |
-|---------|----------|
+| --------- | ---------- |
 | Submodule directory empty | `git submodule init && git submodule update` |
 | Detached HEAD in submodule | `cd .github/copilot-instructions && git checkout main` |
 | Changes not appearing | `git submodule update --remote --merge` |
@@ -159,6 +168,7 @@ checkout([$class: 'GitSCM', extensions: [[$class: 'SubmoduleOption', recursiveSu
 | Symlink not working (Windows) | Enable Developer Mode, or `git config --global core.symlinks true`, or copy instead of symlink |
 
 **Remove submodule:**
+
 ```bash
 git submodule deinit -f .github/copilot-instructions
 git rm -f .github/copilot-instructions

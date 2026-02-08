@@ -9,6 +9,7 @@ A comprehensive guide to frequent mistakes in DevOps practices and how to avoid 
 ### 1. Running Containers as Root
 
 #### ❌ Problem
+
 ```dockerfile
 FROM ubuntu:22.04
 # No USER specified - runs as root by default
@@ -16,6 +17,7 @@ CMD ["/app/server"]
 ```
 
 #### ✅ Solution
+
 ```dockerfile
 FROM ubuntu:22.04
 
@@ -32,6 +34,7 @@ CMD ["/app/server"]
 ### 2. Using :latest Tags
 
 #### ❌ Problem
+
 ```yaml
 # Kubernetes deployment
 spec:
@@ -41,12 +44,14 @@ spec:
 ```
 
 **Issues:**
+
 - Unpredictable behavior (latest changes over time)
 - Rollback is impossible (what was "latest" last week?)
 - Cache invalidation issues
 - Security vulnerabilities may be introduced silently
 
 #### ✅ Solution
+
 ```yaml
 spec:
   containers:
@@ -60,6 +65,7 @@ spec:
 ### 3. Poor Layer Caching
 
 #### ❌ Problem
+
 ```dockerfile
 FROM node:20
 
@@ -77,6 +83,7 @@ CMD ["node", "server.js"]
 **Issue:** Any code change invalidates npm install cache.
 
 #### ✅ Solution
+
 ```dockerfile
 FROM node:20
 
@@ -101,6 +108,7 @@ CMD ["node", "server.js"]
 ### 1. Local State in Team Environment
 
 #### ❌ Problem
+
 ```hcl
 # No backend configuration
 terraform {
@@ -109,12 +117,14 @@ terraform {
 ```
 
 **Issues:**
+
 - State conflicts when multiple people apply
 - No state locking
 - State loss if developer's machine fails
 - No audit trail
 
 #### ✅ Solution
+
 ```hcl
 terraform {
   required_version = ">= 1.5.0"
@@ -134,6 +144,7 @@ terraform {
 ### 2. Using count Instead of for_each
 
 #### ❌ Problem
+
 ```hcl
 variable "users" {
   default = ["alice", "bob", "charlie"]
@@ -147,7 +158,7 @@ resource "aws_iam_user" "users" {
 
 **Issue:** Removing "bob" destroys and recreates "charlie" (index shift).
 
-```
+```text
 Plan:
   - aws_iam_user.users[1] (bob) -> destroy
   - aws_iam_user.users[2] (charlie) -> destroy
@@ -155,6 +166,7 @@ Plan:
 ```
 
 #### ✅ Solution
+
 ```hcl
 variable "users" {
   default = toset(["alice", "bob", "charlie"])
@@ -167,7 +179,8 @@ resource "aws_iam_user" "users" {
 ```
 
 Now removing "bob" only affects that one resource:
-```
+
+```text
 Plan:
   - aws_iam_user.users["bob"] -> destroy
 ```
@@ -177,6 +190,7 @@ Plan:
 ### 3. Hardcoding Values Instead of Data Sources
 
 #### ❌ Problem
+
 ```hcl
 resource "aws_instance" "web" {
   ami           = "ami-0c55b159cbfafe1f0"  # Outdated, region-specific
@@ -186,6 +200,7 @@ resource "aws_instance" "web" {
 ```
 
 #### ✅ Solution
+
 ```hcl
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -216,6 +231,7 @@ resource "aws_instance" "web" {
 ### 4. Not Protecting Stateful Resources
 
 #### ❌ Problem
+
 ```hcl
 resource "aws_db_instance" "production" {
   identifier = "prod-db"
@@ -228,6 +244,7 @@ resource "aws_db_instance" "production" {
 ```
 
 #### ✅ Solution
+
 ```hcl
 resource "aws_db_instance" "production" {
   identifier          = "prod-db"
@@ -247,6 +264,7 @@ resource "aws_db_instance" "production" {
 ### 1. No Resource Limits
 
 #### ❌ Problem
+
 ```yaml
 spec:
   containers:
@@ -256,11 +274,13 @@ spec:
 ```
 
 **Issues:**
+
 - Pod can consume all node resources → node crash
 - No fair scheduling
 - OOMKilled without clear cause
 
 #### ✅ Solution
+
 ```yaml
 spec:
   containers:
@@ -276,6 +296,7 @@ spec:
 ```
 
 **How to determine values:**
+
 ```bash
 # Check actual usage
 kubectl top pod <pod-name>
@@ -289,6 +310,7 @@ kubectl describe vpa <vpa-name>
 ### 2. Secrets in ConfigMaps
 
 #### ❌ Problem
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -300,11 +322,13 @@ data:
 ```
 
 **Issues:**
+
 - Secrets visible in plain text
 - Can be read by anyone with ConfigMap read access
 - Exposed in `kubectl describe`
 
 #### ✅ Solution (Minimum)
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -317,6 +341,7 @@ stringData:  # or data: with base64
 ```
 
 #### ✅ Better Solution (Sealed Secrets / External Secrets)
+
 See [kubernetes/secure-deployment.md](../kubernetes/secure-deployment.md#secrets-management)
 
 ---
@@ -324,6 +349,7 @@ See [kubernetes/secure-deployment.md](../kubernetes/secure-deployment.md#secrets
 ### 3. Missing Health Checks
 
 #### ❌ Problem
+
 ```yaml
 spec:
   containers:
@@ -333,11 +359,13 @@ spec:
 ```
 
 **Issues:**
+
 - Kubernetes sends traffic to pods before they're ready
 - Crashing pods aren't restarted promptly
 - Rolling deployments may break traffic
 
 #### ✅ Solution
+
 ```yaml
 spec:
   containers:
@@ -378,6 +406,7 @@ spec:
 ### 1. Non-Idempotent Tasks
 
 #### ❌ Problem
+
 ```yaml
 - name: Add line to config
   shell: echo "export PATH=$PATH:/opt/bin" >> ~/.bashrc
@@ -386,6 +415,7 @@ spec:
 **Issue:** Running twice adds duplicate lines.
 
 #### ✅ Solution
+
 ```yaml
 - name: Add /opt/bin to PATH
   lineinfile:
@@ -399,6 +429,7 @@ spec:
 ### 2. Secrets in Plain Text
 
 #### ❌ Problem
+
 ```yaml
 # In playbook.yml (committed to Git!)
 - name: Create user
@@ -408,6 +439,7 @@ spec:
 ```
 
 #### ✅ Solution
+
 ```yaml
 # In playbook.yml
 - name: Create user
@@ -423,6 +455,7 @@ vault_mysql_password: !vault |
 ```
 
 **Encrypt:**
+
 ```bash
 ansible-vault encrypt_string 'SuperSecret123!' --name 'vault_mysql_password'
 ```
@@ -432,6 +465,7 @@ ansible-vault encrypt_string 'SuperSecret123!' --name 'vault_mysql_password'
 ### 3. Using shell When Module Exists
 
 #### ❌ Problem
+
 ```yaml
 - name: Install package
   shell: apt-get install -y nginx
@@ -441,11 +475,13 @@ ansible-vault encrypt_string 'SuperSecret123!' --name 'vault_mysql_password'
 ```
 
 **Issues:**
+
 - Not idempotent
 - No error handling
 - Platform-specific
 
 #### ✅ Solution
+
 ```yaml
 - name: Install package
   apt:
@@ -467,6 +503,7 @@ ansible-vault encrypt_string 'SuperSecret123!' --name 'vault_mysql_password'
 ### 1. Building on Main Branch Only
 
 #### ❌ Problem
+
 ```yaml
 name: Build
 on:
@@ -477,6 +514,7 @@ on:
 **Issue:** Bugs discovered after merge, breaking main.
 
 #### ✅ Solution
+
 ```yaml
 name: Build and Test
 on:
@@ -508,6 +546,7 @@ jobs:
 ### 2. Not Pinning CI Tool Versions
 
 #### ❌ Problem
+
 ```yaml
 - uses: actions/checkout@v3  # Major version only
 - uses: docker/build-push-action@latest  # Even worse!
@@ -516,12 +555,14 @@ jobs:
 **Issue:** Workflow breaks when action updates.
 
 #### ✅ Solution
+
 ```yaml
 - uses: actions/checkout@v4.1.1
 - uses: docker/build-push-action@v5.1.0
 ```
 
 Or with commit SHA (most secure):
+
 ```yaml
 - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 ```
@@ -533,17 +574,20 @@ Or with commit SHA (most secure):
 ### 1. No Logging Strategy
 
 #### ❌ Problem
+
 - Logs only in container stdout (lost when pod dies)
 - No centralized logging
 - No retention policy
 
 #### ✅ Solution
+
 - **Structured logging:** Use JSON format
 - **Centralized aggregation:** ELK, Loki, CloudWatch
 - **Retention:** 30-90 days for production
 - **Log levels:** DEBUG (dev), INFO (prod), ERROR (alerts)
 
 **Example structured logging:**
+
 ```python
 import logging
 import json_logging
@@ -559,11 +603,13 @@ logger.info("User logged in", extra={"user_id": user.id, "ip": request.ip})
 ### 2. No Metrics/Alerting
 
 #### ❌ Problem
+
 - Only discovering issues when users complain
 - No visibility into resource usage
 - No SLO tracking
 
 #### ✅ Solution
+
 ```yaml
 # Service Monitor (Prometheus)
 apiVersion: monitoring.coreos.com/v1
@@ -581,6 +627,7 @@ spec:
 ```
 
 **Key metrics to track:**
+
 - Request rate, latency, error rate (RED method)
 - CPU, memory, disk, network (USE method)
 - Business metrics (signups, orders, etc.)
@@ -590,6 +637,7 @@ spec:
 ## Summary Checklist
 
 ### Docker
+
 - [ ] Non-root user (USER directive)
 - [ ] Pinned versions (no :latest)
 - [ ] Multi-stage builds
@@ -597,6 +645,7 @@ spec:
 - [ ] Health checks
 
 ### Terraform
+
 - [ ] Remote state with locking
 - [ ] Secrets via environment/Vault (not .tfvars)
 - [ ] for_each instead of count
@@ -604,6 +653,7 @@ spec:
 - [ ] prevent_destroy for stateful resources
 
 ### Kubernetes
+
 - [ ] Resource limits and requests
 - [ ] Secrets (not ConfigMaps)
 - [ ] Health checks (liveness + readiness)
@@ -611,12 +661,14 @@ spec:
 - [ ] Network policies
 
 ### Ansible
+
 - [ ] Idempotent tasks
 - [ ] Ansible Vault for secrets
 - [ ] Native modules over shell
 - [ ] --check before apply
 
 ### CI/CD
+
 - [ ] Run on PRs (not just main)
 - [ ] Pin action versions
 - [ ] Security scanning
