@@ -17,6 +17,8 @@ Focus: Accessibility, Performance, i18n, Progressive Enhancement
 Critical Rules (TL;DR):
 
 - No Hardcoded Strings: Use i18n keys for ALL user-visible text
+- Theme First: Define design tokens (colors, typography, spacing) before writing components
+- No Inline Styles: Every visual value imports from theme — no hardcoded colors, fonts, or spacing in components
 - Semantic HTML: Proper HTML5 elements, not div soup
 - ARIA Labels: Required for interactive elements and dynamic content
 - Mobile First: Design for mobile, enhance for desktop
@@ -41,6 +43,29 @@ workspace/
 
 </architecture_standards>
 
+<theme_first_workflow>
+Inline styles, inline colors, inline fonts are forbidden in components.
+
+### Design Intention [MUST]
+Before writing a single component, define the visual direction in one sentence. ("Dense developer tool, dark, monospace-heavy" is enough.) Commit to that direction. Do not drift toward safe/generic mid-implementation. When no design brief is given, ask for one — even one sentence changes the output significantly. Avoid defaulting to the same palette, layout, and patterns across every project.
+
+### Theme Before Components [MUST]
+Strict order: (1) Define theme tokens (colors, typography, spacing), (2) Build primitive components (Button, Text, Input) using tokens, (3) Build feature components on top of primitives. Never skip to step 3.
+
+```text
+src/theme/
+  colors.ts         # Color tokens and semantic palette
+  typography.ts     # Font families, sizes, weights
+  spacing.ts        # Spacing scale and layout tokens
+  index.ts          # Theme re-exports
+```
+
+Every component imports from the theme. No exceptions. No hardcoded hex values, font sizes, or spacing values in component files. CSS Variables for runtime theming, TypeScript tokens for type-safe design system access.
+
+### Text Management [SHOULD]
+No hardcoded strings scattered across components. Maintain a centralized strings/copy file from day one, even if not localizing (see internationalization section). This complements the i18n mandate — strings file is the single source of truth.
+</theme_first_workflow>
+
 <technology_standards>
 
 ## TypeScript 5.6+ (Mandatory)
@@ -63,6 +88,24 @@ workspace/
 - State: Context API for simple, Zustand for complex (Redux only for existing codebases)
 - Custom hooks for reusable logic — see [examples/web/react/useAsync.ts](../examples/web/react/useAsync.ts)
 - Component patterns — see [examples/web/react/UserCard.tsx](../examples/web/react/UserCard.tsx)
+
+### Component Architecture
+One component, one responsibility. A component that fetches AND renders, or manages form state AND displays results, must be split. Page-level components are thin composers — no logic, only layout and composition.
+
+```text
+features/UserProfile/
+  UserProfilePage.tsx     # route entry, composes below
+  UserProfileHeader.tsx
+  UserProfileStats.tsx
+  useUserProfile.ts       # all data fetching and state
+  userProfile.types.ts
+```
+
+### API Layer Separation [MUST]
+Network calls are never made directly inside components. Components call hooks → hooks call services → services call the network. Nothing skips a layer. Base URL, auth token injection, and default headers live in a single fetch wrapper — not repeated per call.
+
+### State Discipline
+Server state uses React Query, SWR, or RTK Query. Never manually manage loading/error/data with three separate useState calls. Global client state uses one solution per project — mixing Zustand and Context and Redux requires a documented decision.
 
 ## HTML5
 

@@ -29,9 +29,11 @@ applyTo:
 **Key Rules:**
 
 - No `panic` in library code — return errors. `panic` only in `main` for unrecoverable states.
-- Use `context.Context` as first parameter in functions that do I/O or may be cancelled.
-- Define interfaces at the consumer site, not the implementation site (accept interfaces, return structs).
-- Keep packages small and focused. Avoid circular dependencies.
+- Use `context.Context` as first parameter in functions that do I/O or may be cancelled. Never store context in a struct — pass it explicitly every time.
+- Every goroutine MUST have a visible exit condition before it is written. If you cannot point to the exit condition, design it first. Stored goroutines (launched and not immediately awaited) require a cancellation path.
+- Define interfaces at the consumer site, not the implementation site (accept interfaces, return structs). Maximum three methods per interface — split if more needed. Do not create interfaces speculatively.
+- Packages organized by domain, not by type (`internal/user/service.go`, not `models/user.go`). `internal/` by default. External packages require documented reason.
+- Sentinel errors are package-level variables (`var ErrNotFound = errors.New("not found")`), not inline strings. Never compare `.Error()` strings.
 - Use `go generate` for code generation (mocks, protobuf, sqlc).
 
 **Type Safety:**
