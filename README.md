@@ -10,6 +10,12 @@ Domain-specific instruction files that guide GitHub Copilot to generate secure, 
 and high-quality code. Each file targets specific technologies with security guidelines,
 testing standards, and common pitfalls.
 
+The orchestrator (`copilot-instructions.md`) includes built-in **behavioral discipline rules**
+that address common AI failure modes: context loss, silent scope reduction, over-agreement,
+brute-force debugging, code recklessness, test avoidance, and generic design defaults.
+These rules are inspired by [claude-ground](https://github.com/akinalpfdn/claude-ground)
+and integrated into the existing Agile/TDD workflow.
+
 ## Instruction Files
 
 Located in [`instructions/`](instructions/). Files are split by language/tool
@@ -22,6 +28,8 @@ so only relevant instructions are loaded per file type, minimizing context windo
 | [backend-java](instructions/backend-java.instructions.md) | Java 21 / Spring Boot 3.3+ | `*.java` |
 | [backend-go](instructions/backend-go.instructions.md) | Go 1.22+ | `*.go`, `go.mod`, `go.sum` |
 | [backend-php](instructions/backend-php.instructions.md) | PHP 8.3+ / Laravel 11 / Symfony 7 | `*.php` |
+| [backend-dotnet](instructions/backend-dotnet.instructions.md) | .NET / C# (ASP.NET Core) | `*.cs`, `*.csproj`, `*.sln`, `*.razor` |
+| [backend-rust](instructions/backend-rust.instructions.md) | Rust | `*.rs`, `Cargo.toml`, `Cargo.lock` |
 | [backend-sql](instructions/backend-sql.instructions.md) | SQL | `*.sql` |
 | [ai-integration](instructions/ai-integration.instructions.md) | AI/ML Integration | `*.py`, `*.ts`, `*.js`, `*.java` |
 | [ops-shared](instructions/ops-shared.instructions.md) | DevOps (all) | Dockerfiles, infra YAML, `*.tf`, `*.hcl` |
@@ -33,6 +41,9 @@ so only relevant instructions are loaded per file type, minimizing context windo
 | [scripting-bash](instructions/scripting-bash.instructions.md) | Bash | `*.sh` |
 | [scripting-powershell](instructions/scripting-powershell.instructions.md) | PowerShell | `*.ps1` |
 | [web](instructions/web.instructions.md) | Frontend (React 19 / Next.js 15 / TS 5.6+) | `*.html`, `*.css`, `*.js`, `*.ts`, `*.jsx`, `*.tsx` |
+| [mobile-swift](instructions/mobile-swift.instructions.md) | Swift / SwiftUI (iOS/macOS) | `*.swift`, `Package.swift`, `*.xcodeproj` |
+| [mobile-kotlin](instructions/mobile-kotlin.instructions.md) | Kotlin / Android / Compose | `*.kt`, `*.kts`, `build.gradle*` |
+| [mobile-flutter](instructions/mobile-flutter.instructions.md) | Flutter / Dart | `*.dart`, `pubspec.yaml` |
 
 ## Working Examples
 
@@ -83,16 +94,22 @@ internal library references, team standards, and architectural decisions.
 
 ## Key Features
 
+- **Behavioral Discipline:** Debug protocol (two-attempt rule), approval gates (no silent pivoting),
+  honest opposition (pushback on bad ideas), existing code protocol (read before touch),
+  speed vs. correctness guardrails, context recovery on long sessions
 - **Security by Default:** OWASP Top 10, CIS benchmarks, SLSA supply chain,
   SAST/DAST in CI, no hardcoded secrets, input validation, CSP
 - **TDD Workflow:** Test-first for business logic, linting/validation for infrastructure
 - **Type Safety:** TypeScript 5.6+ strict mode, Python 3.12+ type hints,
-  Java 21 records, PHP 8.3+ strict types, Go generics
+  Java 21 records, PHP 8.3+ strict types, Go generics, Rust ownership, .NET strict typing
 - **Accessibility:** WCAG 2.1 AA, semantic HTML, ARIA, keyboard navigation
 - **Observability:** OpenTelemetry for traces/metrics/logs, structured JSON logging, Prometheus/Grafana
 - **i18n:** Mandatory translation keys, locale-aware formatting
 - **AI Safety:** Prompt injection prevention, output sanitization, cost controls
+- **Theme-First Design:** Design tokens before components, no inline styles, intentional visual direction
 - **Priority System:** Security > Correctness > Accessibility > Performance > Maintainability > Style
+- **Decision Logging:** Structured DECISIONS.md with chosen/alternatives/why/trade-offs/revisit-if format
+- **Periodic Analysis:** Offered at sprint boundaries — performance, security, coverage, a11y, SOLID
 - **Common Pitfalls:** Anti-patterns with corrections (❌/✅ format) in every instruction file
 
 ## What Changed in the Opus 4.6 Overhaul
@@ -122,9 +139,26 @@ internal library references, team standards, and architectural decisions.
 ### New Domains
 
 - **Go** (`backend-go.instructions.md`) — Go 1.22+, error handling, concurrency, sqlc
+- **.NET / C#** (`backend-dotnet.instructions.md`) — ASP.NET Core, constructor DI, layered architecture, async/CancellationToken
+- **Rust** (`backend-rust.instructions.md`) — Ownership patterns, thiserror/anyhow, Tokio, unsafe discipline
+- **Swift / SwiftUI** (`mobile-swift.instructions.md`) — MVVM, async/await, memory management, @MainActor
+- **Kotlin / Android** (`mobile-kotlin.instructions.md`) — Coroutine scopes, sealed UI state, Compose theming
+- **Flutter / Dart** (`mobile-flutter.instructions.md`) — Widget granularity, Riverpod/Bloc, AppTheme, platform isolation
 - **AI/ML Integration** (`ai-integration.instructions.md`) — prompt injection, output safety, cost controls
 - **OpenTofu** — added as Terraform alternative
 - **Podman/Containerfile** — added to Docker instruction patterns
+
+### Behavioral Discipline (claude-ground integration)
+
+- **Debug Protocol** — Two-attempt rule, structured analysis before attempt 3, reproduce-before-fix
+- **Existing Code Protocol** — Read before touch, understand patterns, separate refactoring from features
+- **Approval Gates** — No silent pivoting, scope reduction, or approach changes without user approval
+- **Honest Opposition** — State disagreements directly, validate with reasoning not agreement
+- **Speed vs. Correctness** — "Working" ≠ "production-ready", no silent scope cuts
+- **Context Recovery** — Re-read state file every turn, never rely on conversation history alone
+- **Decision Logging** — DECISIONS.md with structured entries (chosen/alternatives/why/trade-offs)
+- **Periodic Analysis** — Offered at sprint boundaries for targeted code quality review
+- **Theme-First Design** — Design tokens before components, no inline styles, intentional visual direction
 
 ### Security Enhancements
 
@@ -145,15 +179,17 @@ internal library references, team standards, and architectural decisions.
 
 ```text
 copilot-instructions/
-├── copilot-instructions.md        # Main orchestrator
+├── copilot-instructions.md        # Main orchestrator (includes behavioral discipline rules)
 ├── instructions/
 │   ├── backend-shared.instructions.md    # Backend: shared security, testing, architecture
 │   ├── backend-python.instructions.md    # Python 3.12+ standards
 │   ├── backend-java.instructions.md      # Java 21 / Spring Boot 3.3+ standards
-│   ├── backend-go.instructions.md        # Go 1.22+ standards (NEW)
+│   ├── backend-go.instructions.md        # Go 1.22+ standards
 │   ├── backend-php.instructions.md       # PHP 8.3+ standards
+│   ├── backend-dotnet.instructions.md    # .NET / C# / ASP.NET Core standards (NEW)
+│   ├── backend-rust.instructions.md      # Rust standards (NEW)
 │   ├── backend-sql.instructions.md       # SQL standards
-│   ├── ai-integration.instructions.md    # AI/ML integration security (NEW)
+│   ├── ai-integration.instructions.md    # AI/ML integration security
 │   ├── ops-shared.instructions.md        # DevOps: shared security, architecture
 │   ├── ops-docker.instructions.md        # Docker / Podman standards
 │   ├── ops-kubernetes.instructions.md    # Kubernetes standards
@@ -162,7 +198,10 @@ copilot-instructions/
 │   ├── scripting-shared.instructions.md  # Scripting: shared security, validation
 │   ├── scripting-bash.instructions.md    # Bash standards
 │   ├── scripting-powershell.instructions.md # PowerShell standards
-│   └── web.instructions.md               # React 19 / Next.js 15 / TS 5.6+
+│   ├── web.instructions.md               # React 19 / Next.js 15 / TS 5.6+ (+ theme-first workflow)
+│   ├── mobile-swift.instructions.md      # Swift / SwiftUI standards (NEW)
+│   ├── mobile-kotlin.instructions.md     # Kotlin / Android / Compose standards (NEW)
+│   └── mobile-flutter.instructions.md    # Flutter / Dart standards (NEW)
 ├── examples/                      # Working code demonstrations
 │   ├── backend/                   # Java, PHP, Python
 │   ├── web/react/                 # React components + tests
