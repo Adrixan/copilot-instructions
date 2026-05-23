@@ -4,6 +4,7 @@ applyTo:
   - "**/go.mod"
   - "**/go.sum"
 ---
+<!-- markdownlint-disable MD013 -->
 <go_standards>
 
 ## Go
