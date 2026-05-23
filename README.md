@@ -1,13 +1,11 @@
 # GitHub Copilot Instructions Collection
 
-A comprehensive set of best practice instructions and examples to efficiently
-and securely develop across various architectures using GitHub Copilot.
+A comprehensive set of best practice instructions to efficiently
+and securely develop across various architectures using GitHub Copilot, Gemini, and Antigravity agents.
 
 ## Overview
 
-Domain-specific instruction files that guide GitHub Copilot to generate secure, maintainable,
-and high-quality code. Each file targets specific technologies with security guidelines,
-testing standards, and common pitfalls.
+Domain-specific instruction files that strictly govern the behavior of automated coding agents (like GitHub Copilot, Gemini, and Antigravity) to generate secure, maintainable, and high-quality code. These files enforce strict Agile and TDD methodologies, mandate user-profiling, and set explicit constraints to prevent common AI failure modes such as silent scope reduction, context loss, brute-force debugging, and code recklessness. Each file targets specific technologies and sets unwavering baseline rules for security guidelines, accessibility, testing standards, and continuous documentation.
 
 The orchestrator (`copilot-instructions.md`) includes built-in **behavioral discipline rules**
 that address common AI failure modes: context loss, silent scope reduction, over-agreement,
@@ -43,51 +41,28 @@ so only relevant instructions are loaded per file type, minimizing context windo
 | [mobile-kotlin](instructions/mobile-kotlin.instructions.md) | Kotlin / Android / Compose | `*.kt`, `*.kts`, `build.gradle*` |
 | [mobile-flutter](instructions/mobile-flutter.instructions.md) | Flutter / Dart | `*.dart`, `pubspec.yaml` |
 
-## Working Examples
-
-Located in [`examples/`](examples/):
-
-| Category | Files |
-| ---------- | ------- |
-| **Backend** | [Python](examples/backend/python/), [Java](examples/backend/java/), [PHP](examples/backend/php/) — UserService + tests |
-| **Integration Tests** | [Python + Testcontainers](examples/integration-tests/test_user_service_integration.py), [Spring Boot + Testcontainers](examples/integration-tests/UserServiceIntegrationTest.java) |
-| **Production Patterns** | [Alembic migrations](examples/production/), [JWT auth](examples/production/jwt_auth_fastapi.py), [Prometheus](examples/production/prometheus.yml) |
-| **Frontend** | [React components](examples/web/react/) — UserCard, useAsync hook, CSS modules, tests |
-| **DevOps** | [Docker](examples/docker/), [Terraform](examples/terraform/), [Kubernetes](examples/kubernetes/), [Ansible](examples/ansible/), [CI/CD](examples/ci/) |
-| **Scripting** | [Bash deploy](examples/scripting/deploy.sh) + [BATS tests](examples/scripting/test_deploy.bats), [PowerShell backup](examples/scripting/backup.ps1) + [Pester tests](examples/scripting/backup.Tests.ps1) |
-
 ## Quick Start
-
-### Option A: Git Submodule (Recommended)
-
-```bash
-cd /path/to/your/project
-git submodule add https://github.com/Adrixan/copilot-instructions.git .github/copilot-instructions
-ln -s copilot-instructions/copilot-instructions.md .github/copilot-instructions.md
-git add .gitmodules .github/
-git commit -m "Add Copilot instructions as submodule"
-```
-
-**See [SUBMODULE_GUIDE.md](SUBMODULE_GUIDE.md) for team workflows, CI/CD integration, updating, and troubleshooting.**
-
-### Option B: Direct Copy
 
 ```bash
 cp copilot-instructions.md /your/project/.github/
+cp ANTIGRAVITY.md /your/project/
+cp GEMINI.md /your/project/
 cp -r instructions /your/project/.github/
-cp -r examples /your/project/.github/
 ```
 
 ### How It Works
 
-GitHub Copilot automatically loads `.github/copilot-instructions.md`.
+Different agents automatically load their respective orchestrator files:
+- **GitHub Copilot** loads `.github/copilot-instructions.md`.
+- **Antigravity** loads `ANTIGRAVITY.md`.
+- **Gemini** loads `GEMINI.md`.
+
 The orchestrator detects file types via `applyTo` patterns
 and loads domain-specific guidelines.
-All paths are relative for submodule compatibility.
 
 ### Customize for Your Project
 
-Edit `copilot-instructions.md` to add project-specific conventions,
+Edit the orchestrator files to add project-specific conventions,
 internal library references, team standards, and architectural decisions.
 
 ## Key Features
@@ -159,7 +134,6 @@ internal library references, team standards, and architectural decisions.
 
 - SLSA framework for supply chain integrity across all ops instructions
 - SAST/DAST pipeline guidance (Semgrep, CodeQL, OWASP ZAP, Trivy, gosec)
-- Secrets detection (gitleaks, trufflehog) in pre-commit hooks
 - AI output sanitization rules in web and AI integration instructions
 
 ### Quality Improvements
@@ -174,7 +148,9 @@ internal library references, team standards, and architectural decisions.
 
 ```text
 copilot-instructions/
-├── copilot-instructions.md        # Main orchestrator (includes behavioral discipline rules)
+├── copilot-instructions.md        # GitHub Copilot Orchestrator (includes behavioral discipline rules)
+├── ANTIGRAVITY.md                 # Antigravity Orchestrator
+├── GEMINI.md                      # Gemini Orchestrator
 ├── instructions/
 │   ├── backend-shared.instructions.md    # Backend: shared security, testing, architecture
 │   ├── backend-python.instructions.md    # Python 3.12+ standards
@@ -197,30 +173,14 @@ copilot-instructions/
 │   ├── mobile-swift.instructions.md      # Swift / SwiftUI standards (NEW)
 │   ├── mobile-kotlin.instructions.md     # Kotlin / Android / Compose standards (NEW)
 │   └── mobile-flutter.instructions.md    # Flutter / Dart standards (NEW)
-├── examples/                      # Working code demonstrations
-│   ├── backend/                   # Java, PHP, Python
-│   ├── web/react/                 # React components + tests
-│   ├── docker/                    # Secure Dockerfiles
-│   ├── terraform/                 # State & secrets management
-│   ├── kubernetes/                # RBAC, NetworkPolicy
-│   ├── ansible/                   # Vault, idempotency
-│   ├── ci/                        # GitHub Actions pipelines
-│   ├── production/                # Migrations, auth, monitoring
-│   ├── scripting/                 # Bash + PowerShell + tests
-│   └── ops/                       # Cross-domain pitfalls
-├── SUBMODULE_GUIDE.md             # Git submodule integration
 ├── README.md
 └── LICENSE
 ```
 
 ## Contributing
 
-1. Fork → feature branch → add example with comments and tests → update instruction file → PR
-2. Keep all paths relative (submodule compatibility)
-3. Follow existing patterns: security-first, tested, documented, ❌/✅ pitfall format
-
-**For organizations:** Fork, customize, tag releases, add as submodule to team projects.
-Sync upstream with `git fetch upstream && git merge upstream/main`.
+1. Fork → feature branch → update instruction file → PR
+2. Follow existing patterns: security-first, strict behavior control, documented, ❌/✅ pitfall format
 
 ## License
 
