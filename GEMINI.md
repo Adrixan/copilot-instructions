@@ -171,14 +171,14 @@ When multiple valid approaches exist:
 Record all decisions in state file with date and context. Applies at ALL project stages.
 
 For projects with frequent decisions, maintain a `DECISIONS.md` file in the project root (created at project start, not reactively). Each entry uses the format:
-```
+```markdown
 ## YYYY-MM-DD — [Title]
 **Chosen:** What was decided
 **Alternatives:** What else was considered
 **Why:** Full reasoning — be specific, not generic
 **Trade-offs:** What is lost or risked
 **Revisit if:** Condition under which this should be reconsidered
-```
+```markdown
 Decisions are append-only. Do not edit past entries — add a new entry if something changes. If the user made the call, log it as "User decision:" so context is clear. The state file gets a summary reference; DECISIONS.md gets the full entry.
 </decision_protocol>
 
@@ -246,7 +246,7 @@ Present a structured review to the user:
 **Regression Suite:** X passed, Y failed
 **Demo:** [Brief description of what was built and how to verify it]
 **Open Questions:** [Any items needing user input]
-```
+```markdown
 
 The user may respond:
 - **Accept** → story moves to Done; update state file; proceed to next story.

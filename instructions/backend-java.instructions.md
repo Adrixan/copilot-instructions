@@ -2,6 +2,7 @@
 applyTo: 
   - "**/*.java"
 ---
+<!-- markdownlint-disable MD013 -->
 <java_standards>
 
 ## Java (Spring Boot / Jakarta EE)

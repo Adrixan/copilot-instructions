@@ -145,7 +145,6 @@ internal library references, team standards, and architectural decisions.
 - **OpenTofu** — added as Terraform alternative
 - **Podman/Containerfile** — added to Docker instruction patterns
 
-
 - **Debug Protocol** — Two-attempt rule, structured analysis before attempt 3, reproduce-before-fix
 - **Existing Code Protocol** — Read before touch, understand patterns, separate refactoring from features
 - **Approval Gates** — No silent pivoting, scope reduction, or approach changes without user approval
