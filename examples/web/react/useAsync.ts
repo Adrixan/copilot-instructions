@@ -109,7 +109,7 @@ export function useAsync<T>(
       data: null,
       error: null,
       isLoading: false,
-      is Success: false,
+      isSuccess: false,
       isError: false,
     });
   }, []);
