@@ -536,7 +536,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Trivy scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'fs'
 ```

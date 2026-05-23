@@ -476,7 +476,7 @@ snyk container monitor myapp:latest
   run: docker build -t myapp:${{ github.sha }} .
 
 - name: Run Trivy security scan
-  uses: aquasecurity/trivy-action@master
+  uses: aquasecurity/trivy-action@v0.36.0
   with:
     image-ref: myapp:${{ github.sha }}
     format: 'sarif'
