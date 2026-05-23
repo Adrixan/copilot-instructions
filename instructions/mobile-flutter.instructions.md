@@ -37,7 +37,7 @@ Container(
   color: Theme.of(context).colorScheme.primary,
   padding: EdgeInsets.all(AppSpacing.md),
 )
-```
+```text
 
 ### Platform-Specific Code [MUST]
 
@@ -60,7 +60,7 @@ Container(
 
 ### Project Structure
 
-```
+```text
 lib/
   core/         # platform/, network/, di/
   features/     # feature-first folders (auth/, home/, settings/)
@@ -68,7 +68,7 @@ lib/
   theme/        # app_theme.dart, app_colors.dart, etc.
   router/       # route definitions
   providers/    # (Riverpod) or blocs/ (Bloc)
-```
+```text
 
 ### Common Pitfalls
 

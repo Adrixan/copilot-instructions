@@ -2,7 +2,6 @@
 
 A comprehensive set of best practice instructions and examples to efficiently
 and securely develop across various architectures using GitHub Copilot.
-Optimized for Claude Opus 4.6.
 
 ## Overview
 
@@ -13,7 +12,6 @@ testing standards, and common pitfalls.
 The orchestrator (`copilot-instructions.md`) includes built-in **behavioral discipline rules**
 that address common AI failure modes: context loss, silent scope reduction, over-agreement,
 brute-force debugging, code recklessness, test avoidance, and generic design defaults.
-These rules are inspired by [claude-ground](https://github.com/akinalpfdn/claude-ground)
 and integrated into the existing Agile/TDD workflow.
 
 ## Instruction Files
@@ -117,7 +115,6 @@ internal library references, team standards, and architectural decisions.
 ### Orchestrator
 
 - Removed nested backtick fences — clean YAML frontmatter + XML structure
-- Removed Claude Code `#subAgents` dependency — works with standard GitHub Copilot
 - Added `<priority_order>` for conflict resolution (security > correctness > ...)
 - Added `<reasoning_protocol>` for complex architectural decisions
 - Added `<output_templates>` for structured requirements and decision logs
@@ -147,8 +144,6 @@ internal library references, team standards, and architectural decisions.
 - **AI/ML Integration** (`ai-integration.instructions.md`) — prompt injection, output safety, cost controls
 - **OpenTofu** — added as Terraform alternative
 - **Podman/Containerfile** — added to Docker instruction patterns
-
-### Behavioral Discipline (claude-ground integration)
 
 - **Debug Protocol** — Two-attempt rule, structured analysis before attempt 3, reproduce-before-fix
 - **Existing Code Protocol** — Read before touch, understand patterns, separate refactoring from features

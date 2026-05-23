@@ -2,6 +2,7 @@
 applyTo: 
   - "**/*.py"
 ---
+<!-- markdownlint-disable MD013 -->
 <python_standards>
 
 ## Python (FastAPI / Django / Flask)
