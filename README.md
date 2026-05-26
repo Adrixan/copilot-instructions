@@ -43,11 +43,84 @@ so only relevant instructions are loaded per file type, minimizing context windo
 
 ## Quick Start
 
+You can either copy the files directly into your project or integrate this repository as a Git submodule to keep the instructions updated easily.
+
+### Method 1: Copying Files Directly (One-off)
+
+Copy the orchestrator and domain instruction files directly to your project's root and `.github/` folder:
+
 ```bash
 cp copilot-instructions.md /your/project/.github/
 cp ANTIGRAVITY.md /your/project/
 cp GEMINI.md /your/project/
 cp -r instructions /your/project/.github/
+```
+
+### Method 2: Integrating as a Git Submodule (Recommended)
+
+To easily pull updates and share rules across multiple repositories, add this repository as a Git submodule:
+
+```bash
+# From the root of your project:
+git submodule add git@github.com:Adrixan/copilot-instructions.git .github/copilot-instructions
+```
+
+To ensure all agents (GitHub Copilot, Gemini-cli, and Antigravity) automatically discover and load the rules, establish symbolic links mapping the submodule contents to the expected paths.
+
+#### Unix / macOS (Linux, macOS, WSL)
+
+Run these commands from your project root:
+
+```bash
+# 1. Create the .github directory (if it doesn't exist)
+mkdir -p .github
+
+# 2. Symlink orchestrator and domain instructions for GitHub Copilot
+# (We run these relative to the .github/ directory so the links resolve correctly)
+ln -sf copilot-instructions/copilot-instructions.md .github/copilot-instructions.md
+ln -sf copilot-instructions/instructions .github/instructions
+
+# 3. Symlink orchestrator files and instructions for Antigravity & Gemini-cli at the root
+ln -sf .github/copilot-instructions/ANTIGRAVITY.md ANTIGRAVITY.md
+ln -sf .github/copilot-instructions/GEMINI.md GEMINI.md
+ln -sf .github/copilot-instructions/instructions instructions
+```
+
+#### Windows (PowerShell)
+
+Ensure **Developer Mode** is enabled on your Windows machine, then run the following commands in PowerShell from the project root:
+
+```powershell
+# 1. Create symlinks for GitHub Copilot inside .github
+New-Item -ItemType SymbolicLink -Path ".github\copilot-instructions.md" -Value "copilot-instructions\copilot-instructions.md"
+New-Item -ItemType SymbolicLink -Path ".github\instructions" -Value "copilot-instructions\instructions"
+
+# 2. Create root-level symlinks for Antigravity & Gemini-cli
+New-Item -ItemType SymbolicLink -Path "ANTIGRAVITY.md" -Value ".github\copilot-instructions\ANTIGRAVITY.md"
+New-Item -ItemType SymbolicLink -Path "GEMINI.md" -Value ".github\copilot-instructions\GEMINI.md"
+New-Item -ItemType SymbolicLink -Path "instructions" -Value ".github\copilot-instructions\instructions"
+```
+
+To ensure Git handles symlinks correctly across your team's Windows environments when checking out the project, configure Git:
+
+```bash
+git config core.symlinks true
+```
+
+#### Alternative for Gemini-cli (Wrapper File)
+
+If you prefer not to use symlinks for Gemini-cli, you can create a `GEMINI.md` file at your project's root and use the `@include` directive to import the instructions from the submodule:
+
+```markdown
+@include .github/copilot-instructions/GEMINI.md
+```
+
+#### Updating Submodule Instructions
+
+To pull the latest updates from this repository into your project, run:
+
+```bash
+git submodule update --remote --merge
 ```
 
 ### How It Works
@@ -57,13 +130,12 @@ Different agents automatically load their respective orchestrator files:
 - **Antigravity** loads `ANTIGRAVITY.md`.
 - **Gemini** loads `GEMINI.md`.
 
-The orchestrator detects file types via `applyTo` patterns
-and loads domain-specific guidelines.
+The orchestrator detects file types via `applyTo` frontmatter patterns (e.g. `applyTo: "*.py"`) and loads domain-specific guidelines from the `instructions/` folder.
 
 ### Customize for Your Project
 
-Edit the orchestrator files to add project-specific conventions,
-internal library references, team standards, and architectural decisions.
+Edit the orchestrator files to add project-specific conventions, internal library references, team standards, and architectural decisions.
+
 
 ## Key Features
 
