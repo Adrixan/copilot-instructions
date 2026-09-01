@@ -10,7 +10,7 @@ applyTo:
 
 ## Swift / SwiftUI / iOS
 
-- **Swift 5.9+** with strict concurrency checking enabled
+- **Swift 5.9+** (Swift 6+ recommended) with strict concurrency checking enabled
 - **SwiftUI** default. UIKit only when SwiftUI lacks capability.
 - **Architecture:** MVVM — one ViewModel per screen
 - **Dependencies:** Swift Package Manager preferred over CocoaPods/Carthage

@@ -10,7 +10,7 @@ applyTo:
 
 ## .NET / C# (ASP.NET Core)
 
-- **.NET 8 LTS+** with **C# 12** — use latest stable LTS release
+- **.NET LTS** (current LTS recommended, e.g. .NET 10; minimum .NET 8) with **C# 12+**
 - **Primary constructors** for DI in services and controllers
 - **Required members** and `init` properties for immutable DTOs
 - **Records** for value objects, DTOs, and events

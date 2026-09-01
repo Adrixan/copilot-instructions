@@ -12,7 +12,7 @@ Cloud CIS Controls: IAM least privilege, MFA on root/admin,
 encryption at rest and in transit, VPC/network segmentation,
 logging to central SIEM, no public S3/storage buckets by default.
 
-- **Terraform 1.7+** or **OpenTofu 1.7+** (open-source alternative, fully compatible)
+- **Terraform 1.7+** or **OpenTofu 1.7+** (open-source alternative, fully compatible) — current stable recommended
 - Remote state (S3+DynamoDB, Azure Blob, TF Cloud) with locking and encryption.
 - Never commit `.tfvars` with secrets — use `TF_VAR_*` env vars or Vault. Mark sensitive outputs.
 - Run `checkov`, `tfsec`, or `terrascan` before committing.

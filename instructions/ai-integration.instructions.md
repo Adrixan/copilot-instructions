@@ -4,6 +4,8 @@ applyTo:
   - "**/*.ts"
   - "**/*.js"
   - "**/*.java"
+  - "**/*.go"
+  - "**/*.cs"
 ---
 <ai_integration_standards>
 

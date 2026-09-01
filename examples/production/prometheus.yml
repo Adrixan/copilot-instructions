@@ -1,0 +1,26 @@
+# Prometheus scrape pattern for instrumented services.
+# Services expose /metrics (OpenTelemetry SDK or framework auto-instrumentation).
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          service: api
+          env: production
+
+  - job_name: worker
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["worker:9100"]
+        labels:
+          service: worker
+          env: production
+
+# Alert on the orchestrator's baseline thresholds:
+# error rate > 1% and P99 latency > 500ms (see alerting rules file).

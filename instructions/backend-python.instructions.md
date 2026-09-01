@@ -7,7 +7,7 @@ applyTo:
 
 ## Python (FastAPI / Django / Flask)
 
-- **Python 3.12+** with mandatory type hints on all functions/methods
+- **Python 3.12+** (current stable recommended) with mandatory type hints on all functions/methods
 - **`type` statement** for type aliases (Python 3.12+): `type UserId = int`
 - **`@override` decorator** from `typing` for explicit method overrides
 - **Protocol classes** for dependency interfaces (duck typing with contracts)

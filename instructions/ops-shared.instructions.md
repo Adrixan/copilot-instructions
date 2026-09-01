@@ -26,7 +26,7 @@ Critical Rules (TL;DR):
 - Remote State: Terraform MUST use remote state with locking
 - Secrets: Never commit secrets; use Vault/environment variables
 - Read-Only: K8s containers: read-only root filesystem
-- Validate First: Lint before apply (hadolint, tflint, kubeval, ansible-lint)
+- Validate First: Lint before apply (hadolint, tflint, kubeconform, ansible-lint)
 - Resource Limits: Always define CPU/memory limits for containers
 </quick_reference>
 

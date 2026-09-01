@@ -9,7 +9,7 @@ applyTo:
 
 ## Flutter / Dart
 
-- **Dart 3.0+** with sound null safety; never use `!` operator without prior null check
+- **Dart 3.x** (current stable) with sound null safety; never use `!` operator without prior null check
 - **Widget Granularity [MUST]:** `build()` methods must stay under 60 lines — extract private widgets (`_SectionHeader`) in the same file if used once, move to `shared/components/` if reused. **No business logic in `build()`** — delegate to state management or helper methods
 - **Naming:** files `snake_case.dart`, classes `PascalCase`, constants `lowerCamelCase`, private members prefixed `_`
 - **Imports:** prefer relative imports within the same package; sort: dart core → package → relative

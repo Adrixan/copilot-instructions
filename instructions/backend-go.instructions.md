@@ -9,7 +9,7 @@ applyTo:
 
 ## Go
 
-- **Go 1.22+** with modules (`go.mod`) — never use GOPATH mode
+- **Go 1.22+** (current stable recommended) with modules (`go.mod`) — never use GOPATH mode
 - **Standard library first:** Prefer `net/http`, `encoding/json`, `log/slog` over third-party when sufficient
 - **Structured logging:** `log/slog` (stdlib) for structured JSON logs
 - **Error handling:** Always check errors.

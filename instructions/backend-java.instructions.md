@@ -7,7 +7,7 @@ applyTo:
 
 ## Java (Spring Boot / Jakarta EE)
 
-- **Java 21 LTS** with **Spring Boot 3.3+**
+- **Java 21+ LTS** (current LTS recommended) with **Spring Boot 3.5+ or current stable**
 - **Virtual threads** (`@Async` with virtual thread executor, or
   `Executors.newVirtualThreadPerTaskExecutor()`) for I/O-bound workloads
 - **Pattern matching** for `instanceof`, `switch` expressions, and record patterns

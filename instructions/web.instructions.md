@@ -14,6 +14,13 @@ Skills: React, Vue, TypeScript, HTML5, CSS3, Web Standards
 Focus: Accessibility, Performance, i18n, Progressive Enhancement
 </agent_profile>
 
+<scope_note>
+This file's `applyTo` matches all `*.ts`/`*.js`, including Node/backend code. Its rules govern
+**frontend and UI code**. For non-UI TypeScript/JavaScript (CLI tools, backend services), apply
+the general engineering rules from the orchestrator and backend instructions instead; UI-specific
+mandates (i18n keys, theme-first, components) do not apply there.
+</scope_note>
+
 <quick_reference>
 Critical Rules (TL;DR):
 
@@ -72,7 +79,7 @@ No hardcoded strings scattered across components. Maintain a centralized strings
 
 <technology_standards>
 
-## TypeScript 5.6+ (Mandatory)
+## TypeScript (5.6+ minimum, current stable; Mandatory)
 
 - `strict: true` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, and `noUncheckedSideEffectImports`
 - `isolatedDeclarations` for faster builds in monorepos
@@ -80,15 +87,15 @@ No hardcoded strings scattered across components. Maintain a centralized strings
 - No `any` — use `unknown` and narrow. Leverage `satisfies` operator for type-safe object literals.
 - Use `using` declarations (Explicit Resource Management) for cleanup patterns.
 
-## React 19 / Next.js 15
+## React 19+ / Next.js 15+ (current stable)
 
 - Functional components only (no class components)
 - **React Compiler** (automatic memoization) — remove manual `useMemo`/`useCallback` where compiler handles it
 - **Actions** for form handling and server mutations: `useActionState`, `useFormStatus`
 - **`use()` hook** for reading resources (promises, context) in render
 - **React Server Components** (Next.js App Router) as default — use `'use client'` only when needed
-- **Partial Prerendering** (Next.js 15) for hybrid static/dynamic pages
-- **Turbopack** as default bundler in development
+- **Partial Prerendering / hybrid rendering** for mixed static/dynamic pages
+- **Turbopack** as development bundler where supported
 - State: Context API for simple, Zustand for complex (Redux only for existing codebases)
 - Custom hooks for reusable logic — see [examples/web/react/useAsync.ts](../examples/web/react/useAsync.ts)
 - Component patterns — see [examples/web/react/UserCard.tsx](../examples/web/react/UserCard.tsx)
@@ -198,11 +205,10 @@ AI Integration Security (if applicable):
 
 Implementation Checklist:
 
-1. CSP: `default-src 'self'`; whitelist specific script/style/img/connect sources with nonces.
-2. XSS: Never use `dangerouslySetInnerHTML` without `DOMPurify.sanitize()`. React escapes by default — don't bypass it.
-3. Input Validation: Schema validation (Zod) at form boundaries. Validate before submission.
-4. Auth: JWTs in httpOnly cookies (not localStorage).
-   CSRF tokens for state-changing operations. Auto-logout on inactivity.
+1. CSP: `default-src 'self'`; allowlist specific script/style/img/connect sources with nonces.
+2. XSS: per A03 above — sanitize before `dangerouslySetInnerHTML`; never bypass framework escaping.
+3. Input Validation: schema validation (Zod) at form boundaries, before submission.
+4. Auth: per A07 above — httpOnly cookies, CSRF tokens, inactivity handling.
 5. Dependency Auditing: `npm audit` regularly. Use Dependabot/Snyk. SAST with Semgrep or CodeQL.
 </security_standards>
 

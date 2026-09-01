@@ -4,6 +4,8 @@ applyTo:
   - "**/*.py"
   - "**/*.java"
   - "**/*.go"
+  - "**/*.rs"
+  - "**/*.cs"
   - "**/*.sql"
 ---
 <agent_profile>
@@ -18,7 +20,7 @@ Critical Rules (TL;DR):
 - No SQL Injection: Prepared statements ONLY, never string concatenation
 - Migrations: Schema changes ONLY via migration files
 - Dependency Injection: Constructor injection preferred
-- Code Size: Functions <50 lines, classes <300 lines
+- Code Size: Heuristics, not hard limits — functions do one thing (aim ≤50 lines), classes are cohesive (aim ≤300 lines)
 - Security: Input validation, output encoding, least privilege
 - Testing: Minimum 80% coverage for business logic, 100% for critical paths
 - API Versioning: URL path (`/v1/`) or `Accept` header — choose one, be consistent
@@ -64,7 +66,8 @@ OWASP Top 10:
   disable debug in production, minimal error detail in responses.
 - A06 Vulnerable Components: `pip-audit`, `mvn dependency:check`, `composer audit` in CI. Block merge on known CVEs.
 - A07 Auth Failures: JWT with short expiry (15 min access, 7 day refresh).
-  MFA for admins. Account lockout after failed attempts.
+  MFA for admins. Prefer rate limiting + progressive delays over hard account lockout
+  (lockout enables denial-of-service against user accounts; see OWASP/NIST 800-63B).
 - A08 Data Integrity Failures: Verify signatures on updates/serialized data. Use SRI for external resources.
 - A09 Logging & Monitoring: Structured JSON logs for auth events,
   access control failures, input validation failures. Alert on anomalies.
@@ -144,6 +147,7 @@ DTOs at boundaries, domain entities internally.
 
 - Dependency Injection: Constructor injection, depend on abstractions (interfaces/protocols)
 - Single Responsibility: One reason to change per class
-- Microservices threshold: >10,000 LOC or distinct bounded context → extract service
+- Service boundaries follow **bounded contexts** (distinct domains, teams, or scaling needs) —
+  never lines of code. Small services are fine; premature extraction is the real risk.
 - Communication: REST/gRPC (sync), message queues (async); each service owns its database
 </modularity_architecture>

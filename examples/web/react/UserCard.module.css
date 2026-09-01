@@ -1,0 +1,60 @@
+/* Theme tokens live on :root (defined once in the app's theme layer).
+   Components only consume variables — never raw hex values. */
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.avatar {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+}
+
+.role {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.active {
+  color: var(--color-success);
+}
+
+.inactive {
+  color: var(--color-text-muted);
+}
+
+/* Dark mode via system preference (tokens swap on :root in the theme layer;
+   shown here for illustration of runtime theming via CSS variables). */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: var(--color-surface-dark);
+  }
+}
+
+/* Respect reduced motion for any transition this card may gain later. */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card * {
+    transition: none;
+    animation: none;
+  }
+}

@@ -1,13 +1,13 @@
 # Sprint Backlog & To-Do
 
 ## Sprint Goal
-Enable seamless integration of the instructions repository into external projects via Git submodules across all supported agents (GitHub Copilot, Gemini-cli, and Antigravity) on Linux/macOS and Windows.
+Deliver the multi-agent overhaul: lean orchestrator core, opt-in Agile lifecycle, complete examples tree, and verified pickup by Claude Code, OpenCode, Copilot, Gemini CLI, and Antigravity.
 
 ## Selected Stories
-- **Story 1:** Add git submodule setup instructions for coding agents (Must, 2 SP)
+- **Story 2:** Multi-agent overhaul — lean core, real examples, verified pickup (Must, 8 SP)
 
-## Current Story: Add git submodule setup instructions for coding agents
-- [x] Acceptance tests written/prepared (Verify instructions layout and content correctness)
-- [x] Implementation complete (README.md updated)
-- [x] Regression check complete (Markdown linting and link checks)
-- [x] User review: approved
+## Current Story: Multi-agent overhaul
+- [x] Acceptance tests prepared (CI: markdownlint + link check + sync check + frontmatter check)
+- [x] Implementation complete (all validation checks pass locally)
+- [x] Regression check complete (markdownlint clean, links resolve, entry points in sync, Python example tests pass)
+- [ ] User review: pending
